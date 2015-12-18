@@ -8,8 +8,8 @@ var UI = require('ui');
 var Vector2 = require('vector2');
 
 var main = new UI.Card({
-  title: 'Pebble.js',
-  icon: 'images/menu_icon.png',
+  title: 'ecobee',
+  icon: 'images/app_logo.png',
   subtitle: 'Hello Eugene!',
   body: 'Press any button!',
   subtitleColor: 'indigo', // Named colors
@@ -22,8 +22,8 @@ main.on('click', 'up', function(e) {
   var menu = new UI.Menu({
     sections: [{
       items: [{
-        title: 'Pebble.js',
-        icon: 'images/menu_icon.png',
+        title: 'test title',
+        icon: 'images/app_logo.png',
         subtitle: 'Can do Menus'
       }, {
         title: 'Second Item',
