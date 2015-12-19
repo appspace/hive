@@ -1,7 +1,7 @@
 /**
  * Welcome to Pebble.js!
  *
- * This is where you write your app.
+ * This is the app run on pebble watches
  */
 
 var UI = require('ui');
