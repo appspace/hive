@@ -1,7 +1,10 @@
 {
-    "appKeys": {},
+    "appKeys": {
+        "AppKeyReady": 0,
+        "MessageReceived": 1
+    },
     "capabilities": [
-        ""
+        "configurable"
     ],
     "companyName": "eugenes.mobile@gmail.com",
     "longName": "TestJS",

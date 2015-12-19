@@ -34,17 +34,6 @@ main.on('click', 'up', function(e) {
   menu.on('select', function(e) {
     console.log('Selected item #' + e.itemIndex + ' of section #' + e.sectionIndex);
     console.log('The item is titled "' + e.item.title + '"');
-    Pebble.sendAppMessage( { '0': 42, '1': 'String value' },
-        function(e) {
-          console.log('Successfully delivered message with transactionId='
-              + e.data.transactionId);
-        },
-        function(e) {
-          console.log('Unable to deliver message with transactionId='
-              + e.data.transactionId
-              + ' Error is: ' + e.error.message);
-        }
-    );
   });
   menu.show();
 });
@@ -70,4 +59,8 @@ main.on('click', 'down', function(e) {
   card.subtitle('Is a Window');
   card.body('The simplest window type in Pebble.js.');
   card.show();
+});
+
+Pebble.addEventListener('appmessage', function(e) {
+  console.log('Received message: ' + JSON.stringify(e.payload));
 });
