@@ -7,60 +7,78 @@
 var UI = require('ui');
 var Vector2 = require('vector2');
 
-var main = new UI.Card({
-  title: 'ecobee',
-  icon: 'images/app_logo.png',
-  subtitle: 'Hello Eugene!',
-  body: 'Press any button!',
-  subtitleColor: 'indigo', // Named colors
-  bodyColor: '#9a0036' // Hex colors
+var mainWindow = new UI.Window();
+
+var background = new UI.Rect({
+  position: new Vector2(10, 20),
+  size: new Vector2(124, 60),
+  backgroundColor: 'white'
 });
 
-main.show();
-
-main.on('click', 'up', function(e) {
-  var menu = new UI.Menu({
-    sections: [{
-      items: [{
-        title: 'test title',
-        icon: 'images/app_logo.png',
-        subtitle: 'Can do Menus'
-      }, {
-        title: 'Second Item',
-        subtitle: 'Subtitle Text'
-      }]
-    }]
-  });
-  menu.on('select', function(e) {
-    console.log('Selected item #' + e.itemIndex + ' of section #' + e.sectionIndex);
-    console.log('The item is titled "' + e.item.title + '"');
-  });
-  menu.show();
+var temperatureText = new UI.TimeText({
+  position: new Vector2(0, 25),
+  size: new Vector2(144, 30),
+  text: "%H:%M",
+  font: 'bitham-42-bold',
+  color: 'black',
+  textAlign: 'center'
 });
 
-main.on('click', 'select', function(e) {
-  var wind = new UI.Window({
-    fullscreen: true,
-  });
-  var textfield = new UI.Text({
-    position: new Vector2(0, 65),
-    size: new Vector2(144, 30),
-    font: 'gothic-24-bold',
-    text: 'Text Anywhere!',
-    textAlign: 'center'
-  });
-  wind.add(textfield);
-  wind.show();
-});
-
-main.on('click', 'down', function(e) {
-  var card = new UI.Card();
-  card.title('A Card');
-  card.subtitle('Is a Window');
-  card.body('The simplest window type in Pebble.js.');
-  card.show();
-});
+mainWindow.add(background);
+mainWindow.add(temperatureText);
+mainWindow.show();
 
 Pebble.addEventListener('appmessage', function(e) {
   console.log('Received message: ' + JSON.stringify(e.payload));
 });
+
+mainWindow.on('click', 'select', function(event) {
+  temperatureText.text = 'test';
+});
+
+/*
+
+main.on('click', 'down', function(e) {
+   var card = new UI.Card();
+   card.title('A Card');
+   card.subtitle('Is a Window');
+   card.body('The simplest window type in Pebble.js.');
+   card.show();
+});
+
+main.on('click', 'select', function(e) {
+   var wind = new UI.Window({
+   fullscreen: true,
+   });
+   var textfield = new UI.Text({
+   position: new Vector2(0, 65),
+   size: new Vector2(144, 30),
+   font: 'gothic-24-bold',
+   text: 'Text Anywhere!',
+   textAlign: 'center'
+   });
+   wind.add(textfield);
+   wind.show();
+});
+
+main.on('click', 'up', function(e) {
+   var menu = new UI.Menu({
+   sections: [{
+   items: [{
+   title: 'test title',
+   icon: 'images/app_logo.png',
+   subtitle: 'Can do Menus'
+   }, {
+   title: 'Second Item',
+   subtitle: 'Subtitle Text'
+   }]
+   }]
+   });
+   menu.on('select', function(e) {
+   console.log('Selected item #' + e.itemIndex + ' of section #' + e.sectionIndex);
+   console.log('The item is titled "' + e.item.title + '"');
+   });
+   menu.show();
+});
+
+ */
