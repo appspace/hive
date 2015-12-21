@@ -15,11 +15,11 @@ var background = new UI.Rect({
   backgroundColor: 'white'
 });
 
-var temperatureText = new UI.TimeText({
+var temperatureText = new UI.Text({
   position: new Vector2(0, 25),
   size: new Vector2(144, 30),
-  text: "%H:%M",
-  font: 'bitham-42-bold',
+  text: 'Nothing yet',
+  font: 'gothic-18-bold',
   color: 'black',
   textAlign: 'center'
 });
@@ -33,7 +33,8 @@ Pebble.addEventListener('appmessage', function(e) {
 });
 
 mainWindow.on('click', 'select', function(event) {
-  temperatureText.text = 'test';
+  console.log('Click event on mid button');
+  temperatureText.text = 'YUP';
 });
 
 /*
