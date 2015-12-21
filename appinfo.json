@@ -1,55 +1,34 @@
 {
-    "appKeys": {
-        "AppKeyReady": 0,
-        "MessageReceived": 1
-    },
-    "capabilities": [
-        "configurable"
-    ],
-    "companyName": "eugenes.mobile@gmail.com",
-    "longName": "TestJS",
-    "projectType": "pebblejs",
-    "resources": {
-        "media": [
-            {
-                "file": "images/menu_icon.png",
-                "name": "IMAGE_MENU_ICON",
-                "type": "bitmap"
-            },
-            {
-                "file": "images/logo_splash.png",
-                "name": "IMAGE_LOGO_SPLASH",
-                "type": "bitmap"
-            },
-            {
-                "file": "images/tile_splash.png",
-                "name": "IMAGE_TILE_SPLASH",
-                "type": "bitmap"
-            },
-            {
-                "file": "fonts/UbuntuMono-Regular.ttf",
-                "name": "MONO_FONT_14",
-                "type": "font"
-            },
-            {
-                "file": "images/app_logo.png",
-                "menuIcon": true,
-                "name": "IMAGES_APP_LOGO_PNG",
-                "type": "png"
-            }
-        ]
-    },
-    "sdkVersion": "3",
-    "shortName": "TestJS",
-    "targetPlatforms": [
-        "aplite",
-        "basalt"
-    ],
-    "uuid": "4e475ece-7659-4ecf-9cc7-57964455b0ba",
-    "versionCode": 1,
-    "versionLabel": "1.0",
-    "watchapp": {
-        "hiddenApp": false,
-        "watchface": false
-    }
+  "appKeys": {
+    "AppKeyReady": 0,
+    "MessageReceived": 1
+  },
+  "capabilities": [
+    "configurable"
+  ],
+  "companyName": "eugenes.mobile@gmail.com",
+  "longName": "TestJS",
+  "projectType": "pebblejs",
+  "resources": {
+    "media": [
+      {
+        "file": "images/app_logo.png",
+        "menuIcon": true,
+        "name": "IMAGES_APP_LOGO_PNG",
+        "type": "png"
+      }
+    ]
+  },
+  "sdkVersion": "3",
+  "shortName": "TestJS",
+  "targetPlatforms": [
+    "aplite",
+    "basalt",
+    "chalk"
+  ],
+  "uuid": "4e475ece-7659-4ecf-9cc7-57964455b0ba",
+  "versionLabel": "1.0",
+  "watchapp": {
+    "watchface": false
+  }
 }

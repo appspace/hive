@@ -6,6 +6,7 @@
 
 var UI = require('ui');
 var Vector2 = require('vector2');
+var ajax = require('ajax');
 
 var mainWindow = new UI.Window();
 
@@ -34,8 +35,22 @@ Pebble.addEventListener('appmessage', function(e) {
 
 mainWindow.on('click', 'select', function(event) {
   console.log('Click event on mid button');
-  temperatureText.text = 'YUP';
+  temperatureText.text('YUP');
 });
+
+ajax(
+    {
+      url: 'https://api.ecobee.com/1/analytics',
+      type: 'json'
+    },
+    function(data, status, request) {
+      console.log('Response from ecobee:'+data.status.message);
+      temperatureText.text('Code: '+data.status.code);
+    },
+    function(error, status, request) {
+      console.log('The ajax request failed: ' + error);
+    }
+);
 
 /*
 
