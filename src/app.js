@@ -41,6 +41,7 @@ mainWindow.on('click', 'select', function(event) {
 ajax(
     {
       url: 'https://api.ecobee.com/1/analytics',
+      method: 'get',
       type: 'json'
     },
     function(data, status, request) {
@@ -48,7 +49,7 @@ ajax(
       temperatureText.text('Code: '+data.status.code);
     },
     function(error, status, request) {
-      console.log('The ajax request failed: ' + error);
+      console.log('The ajax request failed: ' + error.code+'-'+error.message);
     }
 );
 
