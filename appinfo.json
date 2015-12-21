@@ -1,9 +1,5 @@
 {
-  "appKeys": {
-    "REQ_STATUS": 0,
-    "REQ_CODE": 1,
-    "REQ_MESSAGE": 2
-  },
+  "appKeys": {},
   "capabilities": [
     "configurable"
   ],
@@ -22,11 +18,6 @@
   },
   "sdkVersion": "3",
   "shortName": "TestJS",
-  "targetPlatforms": [
-    "aplite",
-    "basalt",
-    "chalk"
-  ],
   "uuid": "4e475ece-7659-4ecf-9cc7-57964455b0ba",
   "versionLabel": "1.0",
   "watchapp": {

@@ -7,6 +7,7 @@
 var UI = require('ui');
 var Vector2 = require('vector2');
 var ajax = require('ajax');
+var Vibe = require('ui/vibe');
 
 var mainWindow = new UI.Window();
 
@@ -31,15 +32,23 @@ mainWindow.show();
 
 Pebble.addEventListener('appmessage', function(e) {
   console.log('Received message: ' + JSON.stringify(e.payload));
-  console.log('REQ_STATUS '+ e.payload.REQ_STATUS);
-  console.log('REQ_STATUS '+ e.REQ_STATUS);
-  console.log('REQ_CODE '+ e.payload.REQ_CODE);
-  console.log('REQ_MESSAGE '+ e.payload.REQ_MESSAGE);
 });
 
 mainWindow.on('click', 'select', function(event) {
   console.log('Click event on mid button');
-  temperatureText.text('YUP');
+  temperatureText.text('Loading...');
+  ajax({ url: 'https://api.ecobee.com/1/analytics', type: 'json' },
+      function(data) {
+        console.log('Received data.');
+        Vibe.vibrate('short');
+        temperatureText.text('Data OK');
+      },
+      function(error) {
+        console.log('Error receiving ecobee data.');
+        temperatureText.text('Error');
+      }
+  );
+
 });
 
 /*
