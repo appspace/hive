@@ -1,7 +1,8 @@
 {
   "appKeys": {
-    "AppKeyReady": 0,
-    "MessageReceived": 1
+    "REQ_STATUS": 0,
+    "REQ_CODE": 1,
+    "REQ_MESSAGE": 2
   },
   "capabilities": [
     "configurable"

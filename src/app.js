@@ -31,27 +31,16 @@ mainWindow.show();
 
 Pebble.addEventListener('appmessage', function(e) {
   console.log('Received message: ' + JSON.stringify(e.payload));
+  console.log('REQ_STATUS '+ e.payload.REQ_STATUS);
+  console.log('REQ_STATUS '+ e.REQ_STATUS);
+  console.log('REQ_CODE '+ e.payload.REQ_CODE);
+  console.log('REQ_MESSAGE '+ e.payload.REQ_MESSAGE);
 });
 
 mainWindow.on('click', 'select', function(event) {
   console.log('Click event on mid button');
   temperatureText.text('YUP');
 });
-
-ajax(
-    {
-      url: 'https://api.ecobee.com/1/analytics',
-      method: 'get',
-      type: 'json'
-    },
-    function(data, status, request) {
-      console.log('Response from ecobee:'+data.status.message);
-      temperatureText.text('Code: '+data.status.code);
-    },
-    function(error, status, request) {
-      console.log('The ajax request failed: ' + error.code+'-'+error.message);
-    }
-);
 
 /*
 
