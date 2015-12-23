@@ -89,7 +89,7 @@ var authorizePin = function(pin, code) {
         }
     );
   });
-}
+};
 
 var getPin = function() {
   Settings.data('authPin', null);
@@ -99,9 +99,9 @@ var getPin = function() {
   card.title('Authorization');
   card.body('Calling ecobee for authorization. Please wait.');
   card.show();
-  var authUrl = Settings.data('ecobeeServerUrl')
-      +'/authorize?response_type=ecobeePin&scope=smartWrite&client_id='
-      +Settings.data('clientId');
+  var authUrl = Settings.data('ecobeeServerUrl')+
+      '/authorize?response_type=ecobeePin&scope=smartWrite&client_id='+
+      Settings.data('clientId');
   ajax(
       {
         url: authUrl,
@@ -127,12 +127,12 @@ var getPin = function() {
         card.show();
       }
   );
-}
+};
 
 var initialCheck = function() {
   var data = Settings.data();
   //if (true) {
-  if (Object.keys(data).length==0) {
+  if (Object.keys(data).length===0) {
     Settings.data(defaultSettings);
     data = Settings.data();
   }
@@ -154,15 +154,15 @@ var initialCheck = function() {
       authorizePin(pin,  code);
     }
   }
-}
+};
 
 initialCheck();
 
 var getAccessToken = function() {
     var oauthTokenExpires = Settings.data('oauthTokenExpires');
     var refreshToken = Settings.data('refreshToken');
-    var oauthTokem = Settings.data('oauthToken');
-  console.log('oauth token '+oauthToken+' expires at: '+oauthTokenExpires+'; refresh token: '+refreshToken);
+    var oauthToken = Settings.data('oauthToken');
+    console.log('oauth token '+oauthToken+' expires at: '+oauthTokenExpires+'; refresh token: '+refreshToken);
     if (Date.now() > oauthTokenExpires-500) {
       var tokenUrl =  Settings.data('ecobeeServerUrl') +
         Settings.data('ecobeeTokenApi') +
@@ -187,7 +187,7 @@ var getAccessToken = function() {
           },
           function(error) {
             console.log('Error refreshing OAuth token: '+JSON.stringify(error));
-            card = new UI.Card();
+            var card = new UI.Card();
             card.title('Auth Error');
             card.body(error.error_description);
             card.show();
@@ -196,7 +196,7 @@ var getAccessToken = function() {
       } else {
         return Settings.data('oauthToken');
     }
-}
+};
 
 mainWindow.on('click', 'select', function(event) {
   console.log('Click event on mid button');
@@ -228,9 +228,9 @@ mainWindow.on('click', 'select', function(event) {
       },
       function(data) {
         console.log('Received data: '+JSON.stringify(data));
-        if (data.status.code!=0) {
+        if (data.status.code!==0) {
           mainWindow.setText(data.status.message);
-        } else if (data.thermostatList.length==0) {
+        } else if (data.thermostatList.length===0) {
           mainWindow.setText('No thermostats');
         } else {
           var temp = data.thermostatList[0].name;
