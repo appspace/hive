@@ -7,7 +7,7 @@ var Vector2 = require('vector2');
 var defaultSettings = {
   ecobeeServerUrl: 'https://api.ecobee.com', 
   ecobeeTokenApi: '/token',
-  ecobeeApiEndpoint: '/1/analytics',
+  ecobeeApiEndpoint: '/1/thermostat',
   paired: false, 
   refreshToken: null, 
   oauthToken: null, 
@@ -158,19 +158,75 @@ var initialCheck = function() {
 
 initialCheck();
 
+var getAccessToken = function() {
+    var oauthTokenExpires = Settings.data('oauthTokenExpires');
+    console.log('oauth token expiration: '+oauthTokenExpires);
+    if (Date.now() > oauthTokenExpires-500) {
+      var refreshToken = Settings.data('refreshToken');
+      var tokenUrl =  Settings.data('ecobeeServerUrl') +
+        Settings.data('ecobeeTokenApi') +
+        '?grant_type=refresh_token&client_id=' +
+        Settings.data('clientId') +
+        "&refresh_token=" + code;
+      console.log('Calling '+tokenUrl);
+      ajax(
+          {
+            url: tokenUrl,
+            type: 'json',
+            method: 'post'
+          },
+          function(data) {
+            console.log('Received AUTH data: '+JSON.stringify(data));
+            Settings.data('refreshToken', data.refresh_token);
+            Settings.data('oauthToken', data.access_token);
+            var tokenExpiresIn = Date.now()+data.expires_in*1000;
+            console.log('Token '+data.access_token+' will expire at '+tokenExpiresIn);
+            Settings.data('oauthTokenExpires', tokenExpiresIn);
+            return data.access_token;
+          },
+          function(error) {
+            console.log('Error refreshing OAuth token: '+JSON.stringify(error));
+            card = new UI.Card();
+            card.title('Auth Error');
+            card.body(error.error_description);
+            card.show();
+          }
+      );
+      } else {
+        return Settings.data('oauthToken');
+    }
+}
+
 mainWindow.on('click', 'select', function(event) {
   console.log('Click event on mid button');
   mainWindow.setText('Loading...');
-  var callUrl = Settings.data('ecobeeServerUrl')+Settings.data('ecobeeApiEndpoint');
-  console.log('Calling '+callUrl);
+  var jsonRequest = {
+    "selection": {
+      "includeAlerts": "false",
+      "selectionType": "registered",
+      "selectionMatch": "",
+      "includeEvents": "false",
+      "includeSettings": "true",
+      "includeRuntime": "true"
+    }
+  };
+  var callUrl = Settings.data('ecobeeServerUrl')+
+      Settings.data('ecobeeApiEndpoint')+
+      '?json='+encodeURIComponent(JSON.stringify(jsonRequest));
+  var token = getAccessToken();
+  console.log('Calling '+callUrl+' with OAuth token: '+token);
   ajax(
       { 
         url: callUrl, 
-        type: 'json' 
+        type: 'json', 
+        method: 'get', 
+        headers: {
+          'Content-Type': 'application/json;charset=UTF-8',
+          'Authorization': 'Bearer '+token
+        }
       },
       function(data) {
-        console.log('Received data.');
-        Vibe.vibrate('short');
+        console.log('Received data: '+JSON.stringify(data));
         mainWindow.setText('Data OK');
       },
       function(error) {
