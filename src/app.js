@@ -15,7 +15,7 @@ Settings.data({
   authPin: null,
   authCode: null,
   authExpires: null,
-  clientId: 'ABC123'
+  clientId: 'ABC123' 
 });
 
 var mainWindow = new UI.Window();
@@ -43,12 +43,12 @@ mainWindow.setText = function(text) {
 
 var authorizePin = function(pin, code) {
   var card = new UI.Card();
-  card.title(pin);
-  card.body('Log into ecobee.com and click "Add Application" in "My Apps" section.' +
+  card.title('PIN: '+pin);
+  card.body('Log into ecobee.com and go to "My Apps" section.' +
       'Enter the provided pin then '+
-      'press select button to continue with authorization');
+      'press select button.');
   card.show();
-  card.on('click', function(e) {
+  card.on('click', 'select', function(e) {
     var tokenUrl =  Settings.data('ecobeeServerUrl') +
         Settings.data('ecobeeTokenApi') +
         '?grant_type=ecobeePin&client_id=' +
@@ -78,7 +78,7 @@ var authorizePin = function(pin, code) {
         function(error) {
           console.log('Error receiving AUTH data: '+JSON.stringify(error));
           if (error.error === "authorization_pending") {
-            //card.hide();
+            card.hide();
             authorizePin(pin, code);
           } else {
             card = new UI.Card();
@@ -89,7 +89,6 @@ var authorizePin = function(pin, code) {
         }
     );
   });
-  Settings.data('paired', true);
 }
 
 var getPin = function() {
@@ -116,12 +115,12 @@ var getPin = function() {
         var expiresAt = Date.now()+data.expires_in*60*1000;
         console.log('Pin will expire at '+expiresAt);
         Settings.data('authExpires', expiresAt);
-        //card.hide();
+        card.hide();
         authorizePin(data.ecobeePin, data.code);
       },
       function(error) {
         console.log('Error receiving AUTH data: '+JSON.stringify(error));
-        //card.hide();
+        card.hide();
         card = new UI.Card();
         card.title('Auth Error');
         card.body('Unable to contact ecobee. Try again later.');
@@ -174,50 +173,3 @@ mainWindow.on('click', 'select', function(event) {
   );
 
 });
-
-/*
-
-main.on('click', 'down', function(e) {
-   var card = new UI.Card();
-   card.title('A Card');
-   card.subtitle('Is a Window');
-   card.body('The simplest window type in Pebble.js.');
-   card.show();
-});
-
-main.on('click', 'select', function(e) {
-   var wind = new UI.Window({
-   fullscreen: true,
-   });
-   var textfield = new UI.Text({
-   position: new Vector2(0, 65),
-   size: new Vector2(144, 30),
-   font: 'gothic-24-bold',
-   text: 'Text Anywhere!',
-   textAlign: 'center'
-   });
-   wind.add(textfield);
-   wind.show();
-});
-
-main.on('click', 'up', function(e) {
-   var menu = new UI.Menu({
-   sections: [{
-   items: [{
-   title: 'test title',
-   icon: 'images/app_logo.png',
-   subtitle: 'Can do Menus'
-   }, {
-   title: 'Second Item',
-   subtitle: 'Subtitle Text'
-   }]
-   }]
-   });
-   menu.on('select', function(e) {
-   console.log('Selected item #' + e.itemIndex + ' of section #' + e.sectionIndex);
-   console.log('The item is titled "' + e.item.title + '"');
-   });
-   menu.show();
-});
-
- */
