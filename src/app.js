@@ -4,7 +4,7 @@ var Settings = require('settings');
 var UI = require('ui');
 var Vector2 = require('vector2');
 
-Settings.data({
+var defaultSettings = {
   ecobeeServerUrl: 'https://api.ecobee.com', 
   ecobeeTokenApi: '/token',
   ecobeeApiEndpoint: '/1/analytics',
@@ -16,7 +16,7 @@ Settings.data({
   authCode: null,
   authExpires: null,
   clientId: 'ABC123' 
-});
+};
 
 var mainWindow = new UI.Window();
 
@@ -130,8 +130,15 @@ var getPin = function() {
 }
 
 var initialCheck = function() {
+  var data = Settings.data();
+  //if (true) {
+  if (Object.keys(data).length==0) {
+    Settings.data(defaultSettings);
+    data = Settings.data();
+  }
+  console.log('Settings: '+JSON.stringify(data));
+
   var isPaired = Settings.data('paired');
-  console.log('Already paired? '+isPaired);
   if (isPaired) {
     mainWindow.show();
   } else {
