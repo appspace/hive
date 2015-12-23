@@ -29,7 +29,7 @@ var background = new UI.Rect({
 var temperatureText = new UI.Text({
   position: new Vector2(0, 25),
   size: new Vector2(144, 30),
-  text: 'Nothing yet',
+  text: 'Loading...',
   font: 'gothic-18-bold',
   color: 'black',
   textAlign: 'center'
@@ -160,14 +160,15 @@ initialCheck();
 
 var getAccessToken = function() {
     var oauthTokenExpires = Settings.data('oauthTokenExpires');
-    console.log('oauth token expiration: '+oauthTokenExpires);
+    var refreshToken = Settings.data('refreshToken');
+    var oauthTokem = Settings.data('oauthToken');
+  console.log('oauth token '+oauthToken+' expires at: '+oauthTokenExpires+'; refresh token: '+refreshToken);
     if (Date.now() > oauthTokenExpires-500) {
-      var refreshToken = Settings.data('refreshToken');
       var tokenUrl =  Settings.data('ecobeeServerUrl') +
         Settings.data('ecobeeTokenApi') +
         '?grant_type=refresh_token&client_id=' +
         Settings.data('clientId') +
-        "&refresh_token=" + code;
+        "&refresh_token=" + refreshToken;
       console.log('Calling '+tokenUrl);
       ajax(
           {
@@ -227,7 +228,14 @@ mainWindow.on('click', 'select', function(event) {
       },
       function(data) {
         console.log('Received data: '+JSON.stringify(data));
-        mainWindow.setText('Data OK');
+        if (data.status.code!=0) {
+          mainWindow.setText(data.status.message);
+        } else if (data.thermostatList.length==0) {
+          mainWindow.setText('No thermostats');
+        } else {
+          var temp = data.thermostatList[0].name;
+          mainWindow.setText(temp);
+        }
       },
       function(error) {
         console.log('Error receiving ecobee data: '+JSON.stringify(error));
