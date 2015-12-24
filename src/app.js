@@ -129,36 +129,7 @@ var getPin = function() {
   );
 };
 
-var initialCheck = function() {
-  var data = Settings.data();
-  //if (true) {
-  if (Object.keys(data).length===0) {
-    Settings.data(defaultSettings);
-    data = Settings.data();
-  }
-  console.log('Settings: '+JSON.stringify(data));
-
-  var isPaired = Settings.data('paired');
-  if (isPaired) {
-    mainWindow.show();
-  } else {
-    var pinExpiration = Settings.data('authExpires');
-    console.log('Pin expiration: '+pinExpiration);
-    if (!pinExpiration) {
-      getPin();
-    } else if (Date.now() > pinExpiration-5000) {
-      getPin();
-    } else {
-      var pin = Settings.data('authPin');
-      var code = Settings.data('authCode');
-      authorizePin(pin,  code);
-    }
-  }
-};
-
-initialCheck();
-
-var getAccessToken = function() {
+var getAccessToken = function(asyncReq) {
     var oauthTokenExpires = Settings.data('oauthTokenExpires');
     var refreshToken = Settings.data('refreshToken');
     var oauthToken = Settings.data('oauthToken');
@@ -174,6 +145,7 @@ var getAccessToken = function() {
           {
             url: tokenUrl,
             type: 'json',
+            async: asyncReq,
             method: 'post'
           },
           function(data) {
@@ -198,6 +170,36 @@ var getAccessToken = function() {
     }
 };
 
+var initialCheck = function() {
+  var data = Settings.data();
+  //if (true) {
+  if (Object.keys(data).length===0) {
+    Settings.data(defaultSettings);
+    data = Settings.data();
+  }
+  console.log('Settings: '+JSON.stringify(data));
+
+  var isPaired = Settings.data('paired');
+  if (isPaired) {
+    getAccessToken(false);  //Pre-fetch token if expired
+    mainWindow.show();
+  } else {
+    var pinExpiration = Settings.data('authExpires');
+    console.log('Pin expiration: '+pinExpiration);
+    if (!pinExpiration) {
+      getPin();
+    } else if (Date.now() > pinExpiration-5000) {
+      getPin();
+    } else {
+      var pin = Settings.data('authPin');
+      var code = Settings.data('authCode');
+      authorizePin(pin,  code);
+    }
+  }
+};
+
+initialCheck();
+
 mainWindow.on('click', 'select', function(event) {
   console.log('Click event on mid button');
   mainWindow.setText('Loading...');
@@ -214,13 +216,13 @@ mainWindow.on('click', 'select', function(event) {
   var callUrl = Settings.data('ecobeeServerUrl')+
       Settings.data('ecobeeApiEndpoint')+
       '?json='+encodeURIComponent(JSON.stringify(jsonRequest));
-  var token = getAccessToken();
+  var token = getAccessToken(false);
   console.log('Calling '+callUrl+' with OAuth token: '+token);
   ajax(
       { 
         url: callUrl, 
         type: 'json', 
-        method: 'get', 
+        method: 'get',
         headers: {
           'Content-Type': 'application/json;charset=UTF-8',
           'Authorization': 'Bearer '+token
