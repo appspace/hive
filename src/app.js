@@ -17,6 +17,7 @@ var defaultSettings = {
 };
 
 var initialCheck = function() {
+  console.log('Platform: '+JSON.stringify(Pebble.getActiveWatchInfo()));
   var data = Settings.data();
   //if (true) {
   if (Object.keys(data).length===0) {

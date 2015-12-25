@@ -29,6 +29,16 @@
                 "type": "font"
             },
             {
+                "file": "images/menu-color.png",
+                "name": "IMAGES_MENU_COLOR_PNG",
+                "type": "bitmap"
+            },
+            {
+                "file": "images/menu-bw.png",
+                "name": "IMAGES_MENU_BW_PNG",
+                "type": "bitmap"
+            },
+            {
                 "file": "images/down-color.png",
                 "name": "IMAGES_DOWN_COLOR_PNG",
                 "type": "bitmap"
