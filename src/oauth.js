@@ -44,6 +44,7 @@ var doGetAccessToken = function(asyncReq) {
 
 var authPin = function(pin, code, onSuccess) {
   var card = new UI.Card();
+  var successCallback = onSuccess;
   card.title('PIN: '+pin);
   card.body('Log into ecobee.com and go to "My Apps" section.' +
         'Enter the provided pin then '+
@@ -74,7 +75,7 @@ var authPin = function(pin, code, onSuccess) {
             var tokenExpiresIn = Date.now()+data.expires_in*1000;
             console.log('Token '+data.access_token+' will expire at '+tokenExpiresIn);
             Settings.data('oauthTokenExpires', tokenExpiresIn);
-            onSuccess();
+            this.successCallback();
           },
           function(error) {
             console.log('Error receiving AUTH data: '+JSON.stringify(error));
@@ -127,7 +128,7 @@ var doGetPin = function() {
 
 this.exports = {
   getAccessToken: function(asyncReq) {
-    doGetAccessToken(asyncReq);
+    return doGetAccessToken(asyncReq);
   },
   
   getPin: function() {
