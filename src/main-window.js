@@ -36,13 +36,8 @@ var temperatureText = new UI.Text({
   textAlign: 'center'
 });
 
-var modeImage = new UI.Image({
-  position: new Vector2(0, 126),
-  size: new Vector2(18, 168),
-  image: 'img/bg-heat.png'
-});
+var heatModeImage;
 
-mainWindow.add(modeImage);
 mainWindow.add(nameText);
 mainWindow.add(humidityText);
 mainWindow.add(temperatureText);
@@ -57,6 +52,34 @@ mainWindow.setHumidity = function(percentage) {
   humidityText.text(percentage+'%');
 };
 
+mainWindow.setHeatMode = function(settings) {
+  var hvacMode = settings.hvacMode;
+  console.log('HVac mode: '+hvacMode);
+  var imageName;
+  if (hvacMode==='heat' || hvacMode==='auxHeatOnly') {
+    imageName = 'images/bg-heat.png';
+  } else if (hvacMode==='cool') {
+    imageName = 'images/bg-cool.png';
+  } else if (hvacMode==='auto') {
+    imageName = 'images/bg-auto.png';
+  }
+  if (heatModeImage && heatModeImage.image!=imageName) {
+    console.log('removing old image');
+    heatModeImage.remove();
+  }
+  if (!imageName && heatModeImage) {
+    heatModeImage.remove();
+  }
+  if (imageName) {
+    heatModeImage = new UI.Image({
+      position: new Vector2(126, 0),
+      size: new Vector2(18, 168),
+      image: imageName
+    });
+  }
+  mainWindow.add(heatModeImage);
+};
+
 //mainWindow.on('click', 'select', function(event) {
 mainWindow.on('show', function(event) {
   console.log('Show event on main winow');
@@ -67,6 +90,7 @@ mainWindow.on('show', function(event) {
             mainWindow.setTstatName(name);
             mainWindow.setTemperature(thermostat.runtime.actualTemperature);
             mainWindow.setHumidity(thermostat.runtime.actualHumidity);
+            mainWindow.setHeatMode(thermostat.settings);
       }, 
       function(error) {
             ErrorWindow.show('Cannot load thermostat data');
