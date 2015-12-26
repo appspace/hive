@@ -2,9 +2,9 @@ var ajax = require('ajax');
 var Vibe = require('ui/vibe');
 var Settings = require('settings');
 var UI = require('ui');
+var ErrorWindow = require('error-window');
 
-this.exports = {
-  getAccessToken: function(asyncReq) {
+var doGetAccessToken = function(asyncReq) {
     var oauthTokenExpires = Settings.data('oauthTokenExpires');
     var refreshToken = Settings.data('refreshToken');
     var oauthToken = Settings.data('oauthToken');
@@ -34,63 +34,22 @@ this.exports = {
           },
           function(error) {
             console.log('Error refreshing OAuth token: '+JSON.stringify(error));
-            var card = new UI.Card();
-            card.title('Auth Error');
-            card.body(error.error_description);
-            card.show();
+            ErrorWindow.show(error.error_description);
           }
       );
       } else {
         return Settings.data('oauthToken');
     }
-  },
-  
-  getPin: function() {
-    Settings.data('authPin', null);
-    Settings.data('authCode', null);
-    Settings.data('authExpires', null);
-    var card = new UI.Card();
-    card.title('Authorization');
-    card.body('Calling ecobee for authorization. Please wait.');
-    card.show();
-    var authUrl = Settings.data('ecobeeServerUrl')+
-        '/authorize?response_type=ecobeePin&scope=smartWrite&client_id='+
-        Settings.data('clientId');
-    ajax(
-        {
-          url: authUrl,
-          type: 'json'
-        },
-        function(data) {
-          Vibe.vibrate('short');
-          console.log('Received AUTH data: '+JSON.stringify(data));
-          Settings.data('authPin', data.ecobeePin);
-          Settings.data('authCode', data.code);
-          var expiresAt = Date.now()+data.expires_in*60*1000;
-          console.log('Pin will expire at '+expiresAt);
-          Settings.data('authExpires', expiresAt);
-          card.hide();
-          this.authorizePin(data.ecobeePin, data.code);
-        },
-        function(error) {
-          console.log('Error receiving AUTH data: '+JSON.stringify(error));
-          card.hide();
-          card = new UI.Card();
-          card.title('Auth Error');
-          card.body('Unable to contact ecobee. Try again later.');
-          card.show();
-        }
-    );
-  },
+};
 
-  authorizePin: function(pin, code) {
-    var card = new UI.Card();
-    card.title('PIN: '+pin);
-    card.body('Log into ecobee.com and go to "My Apps" section.' +
+var authPin = function(pin, code, onSuccess) {
+  var card = new UI.Card();
+  card.title('PIN: '+pin);
+  card.body('Log into ecobee.com and go to "My Apps" section.' +
         'Enter the provided pin then '+
         'press select button.');
-    card.show();
-    card.on('click', 'select', function(e) {
+  card.show();
+  card.on('click', 'select', function(e) {
       var tokenUrl =  Settings.data('ecobeeServerUrl') +
         Settings.data('ecobeeTokenApi') +
         '?grant_type=ecobeePin&client_id=' +
@@ -115,7 +74,7 @@ this.exports = {
             var tokenExpiresIn = Date.now()+data.expires_in*1000;
             console.log('Token '+data.access_token+' will expire at '+tokenExpiresIn);
             Settings.data('oauthTokenExpires', tokenExpiresIn);
-            //initialCheck();
+            onSuccess();
           },
           function(error) {
             console.log('Error receiving AUTH data: '+JSON.stringify(error));
@@ -123,14 +82,59 @@ this.exports = {
               card.hide();
               this.authorizePin(pin, code);
             } else {
-              card = new UI.Card();
-              card.title('Auth Error');
-              card.body(error.error_description);
-              card.show();
+              ErrorWindow.show();
+              card = new UI.Card(error.error_description);
             }
           }
         );
       });
-    }
+};
+
+var doGetPin = function() {
+    Settings.data('authPin', null);
+    Settings.data('authCode', null);
+    Settings.data('authExpires', null);
+    var card = new UI.Card();
+    card.title('Authorization');
+    card.body('Calling ecobee for authorization. Please wait.');
+    card.show();
+    var authUrl = Settings.data('ecobeeServerUrl')+
+        '/authorize?response_type=ecobeePin&scope=smartWrite&client_id='+
+        Settings.data('clientId');
+    ajax(
+        {
+          url: authUrl,
+          type: 'json'
+        },
+        function(data) {
+          Vibe.vibrate('short');
+          console.log('Received AUTH data: '+JSON.stringify(data));
+          Settings.data('authPin', data.ecobeePin);
+          Settings.data('authCode', data.code);
+          var expiresAt = Date.now()+data.expires_in*60*1000;
+          console.log('Pin will expire at '+expiresAt);
+          Settings.data('authExpires', expiresAt);
+          card.hide();
+          authPin(data.ecobeePin, data.code);
+        },
+        function(error) {
+          console.log('Error receiving AUTH data: '+JSON.stringify(error));
+          card.hide();
+          ErrorWindow.show('Unable to contact ecobee. Try again later.');
+        }
+    );
+};
+
+this.exports = {
+  getAccessToken: function(asyncReq) {
+    doGetAccessToken(asyncReq);
+  },
+  
+  getPin: function() {
+    doGetPin();
+  },
+  authorizePin: function(pin, code) {
+    authPin(pin, code);  
+  }
 
 };

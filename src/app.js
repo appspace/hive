@@ -40,7 +40,9 @@ var initialCheck = function() {
     } else {
       var pin = Settings.data('authPin');
       var code = Settings.data('authCode');
-      Oauth.authorizePin(pin,  code);
+      Oauth.authorizePin(pin,  code, function() {
+        initialCheck();
+      });
     }
   }
 };
