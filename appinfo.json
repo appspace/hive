@@ -29,39 +29,14 @@
                 "type": "font"
             },
             {
+                "file": "images/bg-heat.png",
+                "name": "IMAGES_BG_HEAT_PNG",
+                "type": "bitmap"
+            },
+            {
                 "file": "images/app_logo.png",
                 "menuIcon": true,
                 "name": "IMAGES_APP_LOGO_PNG",
-                "type": "bitmap"
-            },
-            {
-                "file": "images/menu-color.png",
-                "name": "IMAGES_MENU_COLOR_PNG",
-                "type": "bitmap"
-            },
-            {
-                "file": "images/menu-bw.png",
-                "name": "IMAGES_MENU_BW_PNG",
-                "type": "bitmap"
-            },
-            {
-                "file": "images/down-color.png",
-                "name": "IMAGES_DOWN_COLOR_PNG",
-                "type": "bitmap"
-            },
-            {
-                "file": "images/down-bw.png",
-                "name": "IMAGES_DOWN_BW_PNG",
-                "type": "bitmap"
-            },
-            {
-                "file": "images/up-color.png",
-                "name": "IMAGES_UP_COLOR_PNG",
-                "type": "bitmap"
-            },
-            {
-                "file": "images/up-bw.png",
-                "name": "IMAGES_UP_BW_PNG",
                 "type": "bitmap"
             }
         ]
