@@ -4,7 +4,7 @@
         ""
     ],
     "companyName": "eugenes.mobile@gmail.com",
-    "longName": "TestJS",
+    "longName": "Pebble app for controlling ecobee thermostat",
     "projectType": "pebblejs",
     "resources": {
         "media": [
@@ -27,6 +27,12 @@
                 "file": "fonts/UbuntuMono-Regular.ttf",
                 "name": "MONO_FONT_14",
                 "type": "font"
+            },
+            {
+                "file": "images/app_logo.png",
+                "menuIcon": true,
+                "name": "IMAGES_APP_LOGO_PNG",
+                "type": "bitmap"
             },
             {
                 "file": "images/menu-color.png",
@@ -57,17 +63,11 @@
                 "file": "images/up-bw.png",
                 "name": "IMAGES_UP_BW_PNG",
                 "type": "bitmap"
-            },
-            {
-                "file": "images/app_logo.png",
-                "menuIcon": true,
-                "name": "IMAGES_APP_LOGO_PNG",
-                "type": "png"
             }
         ]
     },
     "sdkVersion": "3",
-    "shortName": "TestJS",
+    "shortName": "pebblebee",
     "targetPlatforms": [
         "aplite",
         "basalt"
