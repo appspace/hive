@@ -45,9 +45,15 @@ mainWindow.add(temperatureText);
 mainWindow.setTstatName = function(text) {
   nameText.text(text);  
 };
-mainWindow.setTemperature = function(canonical) {
-  var celsius = (canonical/10-32)*5/9;
-  temperatureText.text(celsius.toPrecision(3));
+mainWindow.setTemperature = function(thermostat) {
+  var canonical = thermostat.runtime.actualTemperature;
+  if (thermostat.settings.useCelsius) {
+    var celsius = (canonical/10-32)*5/9;
+    temperatureText.text(celsius.toPrecision(3));
+  } else {
+    var fahrenheit = canonical/10;
+    temperatureText.text(fahrenheit.toPrecision(2));
+  }
 };
 mainWindow.setHumidity = function(percentage) {
   humidityText.text(percentage+'%');
@@ -87,7 +93,7 @@ var refreshData = function() {
       function(thermostat) {
             var name = thermostat.name;
             mainWindow.setTstatName(name);
-            mainWindow.setTemperature(thermostat.runtime.actualTemperature);
+            mainWindow.setTemperature(thermostat);
             mainWindow.setHumidity(thermostat.runtime.actualHumidity);
             mainWindow.setHeatMode(thermostat.settings);
       }, 
@@ -107,7 +113,7 @@ mainWindow.on('show', function(event) {
       function(thermostat) {
             var name = thermostat.name;
             mainWindow.setTstatName(name);
-            mainWindow.setTemperature(thermostat.runtime.actualTemperature);
+            mainWindow.setTemperature(thermostat);
             mainWindow.setHumidity(thermostat.runtime.actualHumidity);
             mainWindow.setHeatMode(thermostat.settings);
             Accel.init();
