@@ -2,6 +2,7 @@ var UI = require('ui');
 var Vector2 = require('vector2');
 var ecobeeApi = require('ecobee-api');
 var ErrorWindow = require('error-window');
+var Accel = require('ui/accel');
 
 var mainWindow = new UI.Window({
   fullscreen: true, 
@@ -80,9 +81,7 @@ mainWindow.setHeatMode = function(settings) {
   mainWindow.add(heatModeImage);
 };
 
-//mainWindow.on('click', 'select', function(event) {
-mainWindow.on('show', function(event) {
-  console.log('Show event on main winow');
+var refreshData = function() {
   mainWindow.setTstatName('Loading...');
   ecobeeApi.loadThermostat(null, 
       function(thermostat) {
@@ -95,6 +94,34 @@ mainWindow.on('show', function(event) {
       function(error) {
             ErrorWindow.show('Cannot load thermostat data');
       });
+};
+
+mainWindow.on('click', 'select', function(event) {
+  refreshData();
+});
+
+mainWindow.on('show', function(event) {
+  console.log('Show event on main winow');
+  mainWindow.setTstatName('Loading...');
+  ecobeeApi.loadThermostat(null, 
+      function(thermostat) {
+            var name = thermostat.name;
+            mainWindow.setTstatName(name);
+            mainWindow.setTemperature(thermostat.runtime.actualTemperature);
+            mainWindow.setHumidity(thermostat.runtime.actualHumidity);
+            mainWindow.setHeatMode(thermostat.settings);
+            Accel.init();
+            mainWindow.on('accelTap', function(e) {
+              refreshData();
+            });
+      }, 
+      function(error) {
+            ErrorWindow.show('Cannot load thermostat data');
+      });
+});
+
+mainWindow.on('hide', function(event) {
+  console.log('Hiding main window');
 });
 
 this.exports = {
