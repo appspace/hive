@@ -7,21 +7,20 @@ var jsonRequest = {
       "includeAlerts": "false",
       "selectionType": "registered",
       "selectionMatch": "",
-      "includeEvents": "false",
+      "includeEvents": "true",
       "includeSettings": "true",
       "includeRuntime": "true"
     }
 };
 
-var callUrl = Settings.data('ecobeeServerUrl')+
-  Settings.data('ecobeeApiEndpoint')+
-  '?json='+encodeURIComponent(JSON.stringify(jsonRequest));
-
 this.exports = {
   loadThermostat: function(tstatId, onSuccess, onError) {
     //TODO: Add caching
     var token = Oauth.getAccessToken(false);
-    console.log('Calling '+callUrl+' with OAuth token: '+token);
+    var callUrl = Settings.data('ecobeeServerUrl')+
+      Settings.data('ecobeeApiEndpoint')+
+      '?json='+encodeURIComponent(JSON.stringify(jsonRequest));
+    console.log('GET '+callUrl+' with OAuth token: '+token);
     ajax(
         { 
           url: callUrl, 
@@ -40,6 +39,35 @@ this.exports = {
             onError('No thermostats linked to account');
           } else {
             onSuccess(data.thermostatList[0]);
+          }
+        },
+        function(error) {
+          console.log('Error receiving ecobee data: '+JSON.stringify(error));
+          onError(error);
+        }
+    );
+  }, 
+  postThermostat: function(req, onSuccess, onError) {
+    var token = Oauth.getAccessToken(false);
+    var callUrl = Settings.data('ecobeeServerUrl')+Settings.data('ecobeeApiEndpoint')+'?format=json';
+    console.log('POST '+JSON.stringify(req)+' to '+callUrl+' with OAuth token: '+token);
+    ajax(
+        { 
+          url: callUrl, 
+          type: 'json', 
+          method: 'post',
+          headers: {
+            'Content-Type': 'application/json;charset=UTF-8',
+            'Authorization': 'Bearer '+token
+          }, 
+          data: req
+        },
+        function(data) {
+          console.log('Received data: '+JSON.stringify(data));
+          if (data.status.code!==0) {
+            onError(data.status.message);
+          } else {
+            onSuccess();
           }
         },
         function(error) {
