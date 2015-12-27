@@ -13,9 +13,23 @@ var jsonRequest = {
     }
 };
 
+var cache;
+var cacheExpiration;
+
 this.exports = {
   loadThermostat: function(tstatId, onSuccess, onError) {
     //TODO: Add caching
+    if (Date.now()>cacheExpiration) {
+      console.log('Cache expired');
+      cache = null;
+    }
+    if (cache!==null) {
+      console.log('Data in cache: '+JSON.stringify(cache));
+      if (!tstatId || tstatId===cache.identifier) {
+        console.log('Returning cached thermostat');
+        return cache;
+      } 
+    }
     var token = Oauth.getAccessToken(false);
     var callUrl = Settings.data('ecobeeServerUrl')+
       Settings.data('ecobeeApiEndpoint')+
@@ -38,7 +52,9 @@ this.exports = {
           } else if (data.thermostatList.length===0) {
             onError('No thermostats linked to account');
           } else {
-            onSuccess(data.thermostatList[0]);
+            cache = data.thermostatList[0];
+            cacheExpiration = Date.now()+30*1000;
+            onSuccess(cache);
           }
         },
         function(error) {

@@ -39,8 +39,9 @@ var temperatureText = new UI.Text({
 });
 
 var holdText = new UI.Text({
-  position: new Vector2(0, 100),
+  position: new Vector2(0, 140),
   size: new Vector2(144, 20),
+  borderColor: 'white',
   text: '',
   font: 'gothic-18',
   color: 'white',
