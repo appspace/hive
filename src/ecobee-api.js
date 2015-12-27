@@ -23,7 +23,7 @@ this.exports = {
       console.log('Cache expired');
       cache = null;
     }
-    if (cache!==null) {
+    if (cache && cache!==null) {
       console.log('Data in cache: '+JSON.stringify(cache));
       if (!tstatId || tstatId===cache.identifier) {
         console.log('Returning cached thermostat');
@@ -64,6 +64,7 @@ this.exports = {
     );
   }, 
   postThermostat: function(req, onSuccess, onError) {
+    cache = null;  //SO that it refreshes
     var token = Oauth.getAccessToken(false);
     var callUrl = Settings.data('ecobeeServerUrl')+Settings.data('ecobeeApiEndpoint')+'?format=json';
     console.log('POST '+JSON.stringify(req)+' to '+callUrl+' with OAuth token: '+token);

@@ -39,9 +39,9 @@ var temperatureText = new UI.Text({
 });
 
 var holdText = new UI.Text({
-  position: new Vector2(0, 140),
-  size: new Vector2(144, 20),
-  borderColor: 'white',
+  position: new Vector2(20, 130),
+  size: new Vector2(86, 20),
+  borderColor: 'black',
   text: '',
   font: 'gothic-18',
   color: 'white',
@@ -77,9 +77,11 @@ mainWindow.setHumidity = function(percentage) {
 mainWindow.displayHold = function(thermostat) {
   var hasHold = Utils.hasHold(thermostat);
   if (hasHold) {
+    holdText.borderColor('white');
     holdText.text('Hold');
   } else {
     holdText.text('');
+    holdText.borderColor('black');
   }
 };
 
@@ -171,7 +173,6 @@ mainWindow.setHeatMode = function(thermostat) {
 };
 
 var refreshData = function() {
-  mainWindow.setTstatName('Loading...');
   ecobeeApi.loadThermostat(null, 
       function(thermostat) {
         myTstat = thermostat;
@@ -182,7 +183,7 @@ var refreshData = function() {
         mainWindow.displayHold(myTstat);
       }, 
       function(error) {
-            ErrorWindow.show('Cannot load thermostat data');
+        ErrorWindow.show('Cannot load thermostat data');
       });
 };
 
@@ -228,7 +229,6 @@ mainWindow.on('click', 'down', function(event) {
 
 mainWindow.on('show', function(event) {
   console.log('Show event on main winow');
-  mainWindow.setTstatName('Loading...');
   ecobeeApi.loadThermostat(null, 
       function(thermostat) {
             myTstat = thermostat;
