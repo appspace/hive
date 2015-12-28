@@ -4,6 +4,7 @@ var ecobeeApi = require('ecobee-api');
 var ErrorWindow = require('error-window');
 var Accel = require('ui/accel');
 var Utils = require('utils');
+var Menu = require('menu');
 
 var mainWindow = new UI.Window({
   fullscreen: true, 
@@ -39,8 +40,8 @@ var temperatureText = new UI.Text({
 });
 
 var holdText = new UI.Text({
-  position: new Vector2(20, 130),
-  size: new Vector2(86, 20),
+  position: new Vector2(40, 130),
+  size: new Vector2(66, 20),
   borderColor: 'black',
   text: '',
   font: 'gothic-18',
@@ -215,7 +216,6 @@ var changeTemperature = function(delta) {
                           function(error) {
                             console.log('error: '+error);
                           });
-  
 };
 
 mainWindow.on('click', 'up', function(event) {
@@ -226,6 +226,9 @@ mainWindow.on('click', 'down', function(event) {
   changeTemperature(-20);
 });
 
+mainWindow.on('click', 'select', function(event) {
+  Menu.show(myTstat);
+});
 
 mainWindow.on('show', function(event) {
   console.log('Show event on main winow');

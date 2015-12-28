@@ -27,6 +27,71 @@ this.exports = {
     };
   }, 
   
+  createAwayHoldEvent: function(thermostat) {
+    return {
+      "selection": {
+            "selectionType": "thermostats",
+            "selectionMatch": thermostat.identifier
+          },
+          "functions": [{
+            "type":"setHold",
+            "params":{
+              "holdType":"nextTransition",
+              "holdClimateRef":"away"
+            }
+          }]
+    };
+  },
+
+  createHomeHoldEvent: function(thermostat) {
+    return {
+      "selection": {
+            "selectionType": "thermostats",
+            "selectionMatch": thermostat.identifier
+          },
+          "functions": [{
+            "type":"setHold",
+            "params":{
+              "holdType":"nextTransition",
+              "holdClimateRef":"home"
+            }
+          }]
+    };
+  },
+  
+    createSleepHoldEvent: function(thermostat) {
+    return {
+      "selection": {
+            "selectionType": "thermostats",
+            "selectionMatch": thermostat.identifier
+          },
+          "functions": [{
+            "type":"setHold",
+            "params":{
+              "holdType":"nextTransition",
+              "holdClimateRef":"sleep"
+            }
+          }]
+    };
+  },
+  
+  createResumeProgramEvent: function(thermostat) {
+    return {
+        "selection": {
+            "selectionType": "thermostats",
+            "selectionMatch": thermostat.identifier
+            },
+        "functions": [
+            {
+                "type": "resumeProgram",
+                "params": {
+                  'resumeAll': true
+                }
+            }
+        ]
+    };
+  },
+  
   hasHold: function(thermostat) {
     if (thermostat.events && thermostat.events.length > 0) 
 		{

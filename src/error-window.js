@@ -7,5 +7,8 @@ this.exports = {
     });
     card.body(errorText);
     card.show();
+    card.on('hide', function() {
+      card.hide();
+    });
   }
 };
