@@ -29,6 +29,11 @@
                 "type": "font"
             },
             {
+                "file": "images/bg-heat.png",
+                "name": "IMAGES_BG_HEAT_PNG",
+                "type": "bitmap"
+            },
+            {
                 "file": "images/bg-cool.png",
                 "name": "IMAGES_BG_COOL_PNG",
                 "type": "bitmap"
@@ -36,11 +41,6 @@
             {
                 "file": "images/bg-auto.png",
                 "name": "IMAGES_BG_AUTO_PNG",
-                "type": "bitmap"
-            },
-            {
-                "file": "images/bg-heat.png",
-                "name": "IMAGES_BG_HEAT_PNG",
                 "type": "bitmap"
             },
             {
