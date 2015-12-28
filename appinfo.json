@@ -30,6 +30,11 @@
                 "type": "font"
             },
             {
+                "file": "images/bg-heat.png",
+                "name": "IMAGES_BG_HEAT_PNG",
+                "type": "bitmap"
+            },
+            {
                 "file": "images/bg-cool.png",
                 "name": "IMAGES_BG_COOL_PNG",
                 "type": "bitmap"
@@ -40,13 +45,7 @@
                 "type": "bitmap"
             },
             {
-                "file": "images/bg-heat.png",
-                "name": "IMAGES_BG_HEAT_PNG",
-                "type": "bitmap"
-            },
-            {
                 "file": "images/app_logo.png",
-                "menuIcon": true,
                 "name": "IMAGES_APP_LOGO_PNG",
                 "type": "bitmap"
             }
