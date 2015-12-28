@@ -9,18 +9,7 @@
     "resources": {
         "media": [
             {
-                "menuIcon": true,
-                "file": "images/menu_icon.png",
-                "name": "IMAGE_MENU_ICON",
-                "type": "bitmap"
-            },
-            {
-                "file": "images/logo_splash.png",
-                "name": "IMAGE_LOGO_SPLASH",
-                "type": "bitmap"
-            },
-            {
-                "file": "images/tile_splash.png",
+                "file": "images/app_logo_splash.png",
                 "name": "IMAGE_TILE_SPLASH",
                 "type": "bitmap"
             },
@@ -47,7 +36,8 @@
             {
                 "file": "images/app_logo.png",
                 "name": "IMAGES_APP_LOGO_PNG",
-                "type": "bitmap"
+                "type": "bitmap",
+                "menuIcon": true
             }
         ]
     },
