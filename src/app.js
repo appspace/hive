@@ -31,18 +31,19 @@ var initialCheck = function() {
     Oauth.getAccessToken(false);  //Pre-fetch token if expired
     MainWindow.show();
   } else {
+    var successCallback = function() {
+        initialCheck();
+    };
     var pinExpiration = Settings.data('authExpires');
     console.log('Pin expiration: '+pinExpiration);
     if (!pinExpiration) {
-      Oauth.getPin();
+      Oauth.getPin(successCallback);
     } else if (Date.now() > pinExpiration-5000) {
-      Oauth.getPin();
+      Oauth.getPin(successCallback);
     } else {
       var pin = Settings.data('authPin');
       var code = Settings.data('authCode');
-      Oauth.authorizePin(pin,  code, function() {
-        initialCheck();
-      });
+      Oauth.authorizePin(pin,  code, successCallback);
     }
   }
 };

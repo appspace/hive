@@ -44,7 +44,6 @@ var doGetAccessToken = function(asyncReq) {
 
 var authPin = function(pin, code, onSuccess) {
   var card = new UI.Card();
-  var successCallback = onSuccess;
   card.title('PIN: '+pin);
   card.body('Log into ecobee.com and go to "My Apps" section.' +
         'Enter the provided pin then '+
@@ -75,7 +74,8 @@ var authPin = function(pin, code, onSuccess) {
             var tokenExpiresIn = Date.now()+data.expires_in*1000;
             console.log('Token '+data.access_token+' will expire at '+tokenExpiresIn);
             Settings.data('oauthTokenExpires', tokenExpiresIn);
-            this.successCallback();
+            card.hide();
+            onSuccess();
           },
           function(error) {
             console.log('Error receiving AUTH data: '+JSON.stringify(error));
@@ -91,7 +91,7 @@ var authPin = function(pin, code, onSuccess) {
       });
 };
 
-var doGetPin = function() {
+var doGetPin = function(onSuccess) {
     Settings.data('authPin', null);
     Settings.data('authCode', null);
     Settings.data('authExpires', null);
@@ -116,7 +116,7 @@ var doGetPin = function() {
           console.log('Pin will expire at '+expiresAt);
           Settings.data('authExpires', expiresAt);
           card.hide();
-          authPin(data.ecobeePin, data.code);
+          authPin(data.ecobeePin, data.code, onSuccess);
         },
         function(error) {
           console.log('Error receiving AUTH data: '+JSON.stringify(error));
@@ -131,11 +131,11 @@ this.exports = {
     return doGetAccessToken(asyncReq);
   },
   
-  getPin: function() {
-    doGetPin();
+  getPin: function(onSuccess) {
+    doGetPin(onSuccess);
   },
-  authorizePin: function(pin, code) {
-    authPin(pin, code);  
+  authorizePin: function(pin, code, onSuccess) {
+    authPin(pin, code, onSuccess);  
   }
 
 };
