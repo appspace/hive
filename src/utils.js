@@ -98,11 +98,9 @@ this.exports = {
 			var runningEvent = thermostat.events[0];
       console.log('Running event: '+JSON.stringify(runningEvent));
 			if (runningEvent.type === 'hold' && runningEvent.running) {
-        console.log('This is a hold event!');
         return true;
       }
     }
-    console.log('This is NOT a hold event');
     return false;
   }
 };

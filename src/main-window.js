@@ -218,11 +218,40 @@ var changeTemperature = function(delta) {
                           });
 };
 
-mainWindow.on('click', 'up', function(event) {
+function animateHoldTempText(delta) {
+    if (holdTemp1) {
+    var pos = holdTemp1.position();
+    var originalPosition = pos.y;
+    pos.y = pos.y + delta;
+    holdTemp1.animate('position', pos, 200);  
+    holdTemp1.queue(function(next) {
+      pos = this.position();
+      pos.y = originalPosition;
+      this.animate('position', pos, 100);
+      next();
+    });
+  }
+  if (holdTemp2) {
+    var pos2 = holdTemp2.position();
+    var originalPosition2 = pos2.y;
+    pos2.y = pos2.y + delta;
+    holdTemp2.animate('position', pos2, 200);
+    holdTemp2.queue(function(next) {
+      pos2 = this.position();
+      pos2.y = originalPosition2;
+      this.animate('position', pos2, 100);
+      next();
+    });
+  }
+}
+
+mainWindow.on('click', 'up', function(event) { 
+  animateHoldTempText(-20);
   changeTemperature(20);
 });
 
 mainWindow.on('click', 'down', function(event) {
+  animateHoldTempText(20);
   changeTemperature(-20);
 });
 
