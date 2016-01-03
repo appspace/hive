@@ -93,7 +93,6 @@ this.exports = {
           sleepHold(thermostat);
         }
       }
-      
     });
     menu.show();
   }

@@ -5,6 +5,7 @@ var ErrorWindow = require('error-window');
 var Accel = require('ui/accel');
 var Utils = require('utils');
 var Menu = require('menu');
+var Elements = require('elements');
 
 var mainWindow = new UI.Window({
   fullscreen: true, 
@@ -103,14 +104,7 @@ mainWindow.setHeatMode = function(thermostat) {
     } else {
       heatHold = Utils.canonicalToFahrenheit(thermostat.runtime.desiredHeat).toPrecision(2);
     }
-    holdTemp1 = new UI.Text({
-      position: new Vector2(118, 72),
-      size: new Vector2(28, 20),
-      color: '#FF5500',
-      text: heatHold,
-      font: 'gothic-18',
-      textAlign: 'center'    
-    });
+    holdTemp1 = Elements.holdTempHeat(heatHold, new Vector2(118, 72));
   } else if (hvacMode==='cool') {
     imageName = 'images/bg-cool.png';
     if (thermostat.settings.useCelsius) {
@@ -118,14 +112,7 @@ mainWindow.setHeatMode = function(thermostat) {
     } else {
       coolHold = Utils.canonicalToFahrenheit(thermostat.runtime.desiredCool).toPrecision(2);
     }
-    holdTemp1 = new UI.Text({
-      position: new Vector2(118, 72),
-      size: new Vector2(28, 20),
-      color: '#00AAFF',
-      text: coolHold,
-      font: 'gothic-18',
-      textAlign: 'center'    
-    });
+    holdTemp1 = Elements.holdTempCool(coolHold, new Vector2(118, 72));
   } else if (hvacMode==='auto') {
     imageName = 'images/bg-auto.png';
     if (thermostat.settings.useCelsius) {
@@ -135,22 +122,8 @@ mainWindow.setHeatMode = function(thermostat) {
       coolHold = Utils.canonicalToFahrenheit(thermostat.runtime.desiredCool).toPrecision(2);
       heatHold = Utils.canonicalToFahrenheit(thermostat.runtime.desiredHeat).toPrecision(2);
     }
-    holdTemp1 = new UI.Text({
-      position: new Vector2(118, 54),
-      size: new Vector2(28, 20),
-      color: '#00AAFF',
-      text: coolHold,
-      font: 'gothic-18',
-      textAlign: 'center'    
-    });
-    holdTemp2 = new UI.Text({
-      position: new Vector2(118, 87),
-      size: new Vector2(28, 20),
-      color: '#FF5500',
-      text: heatHold,
-      font: 'gothic-18',
-      textAlign: 'center'    
-    });
+    holdTemp1 = Elements.holdTempCool(coolHold, new Vector2(118, 54));
+    holdTemp2 = Elements.holdTempHeat(heatHold, new Vector2(118, 87));
   }
   if (heatModeImage && heatModeImage.image!=imageName) {
     console.log('removing old image');
