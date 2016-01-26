@@ -23,13 +23,13 @@ var nameText = new UI.Text({
 });
 
 var humidityIcon = new UI.Image({
-      position: new Vector2(50, 40),
-      size: new Vector2(20, 20),
-      image: 'images/humidity-icon.png'
+  position: new Vector2(50, 44),
+  size: new Vector2(20, 20),
+  image: 'images/humidity-icon.png'
 });
 
 var humidityText = new UI.Text({
-  position: new Vector2(70, 38),
+  position: new Vector2(70, 42),
   size: new Vector2(74, 18),
   text: '',
   font: 'gothic-18',
@@ -48,7 +48,7 @@ var temperatureText = new UI.Text({
 
 var holdText = new UI.Text({
   position: new Vector2(40, 130),
-  size: new Vector2(66, 20),
+  size: new Vector2(66, 24),
   borderColor: 'black',
   text: '',
   font: 'gothic-18',
