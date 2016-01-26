@@ -22,14 +22,23 @@ var nameText = new UI.Text({
   textAlign: 'left'
 });
 
+var modeText = new UI.Text({
+  position: new Vector2(0, 22),
+  size: new Vector2(144, 18),
+  text: 'HEAT',
+  font: 'gothic-18',
+  color: 'white',
+  textAlign: 'center'
+});
+
 var humidityIcon = new UI.Image({
-  position: new Vector2(50, 44),
+  position: new Vector2(46, 44),
   size: new Vector2(20, 20),
   image: 'images/humidity-icon.png'
 });
 
 var humidityText = new UI.Text({
-  position: new Vector2(70, 42),
+  position: new Vector2(66, 42),
   size: new Vector2(74, 18),
   text: '',
   font: 'gothic-18',
@@ -61,6 +70,7 @@ var holdTemp1;
 var holdTemp2;
 var myTstat;
 
+mainWindow.add(modeText);
 mainWindow.add(nameText);
 mainWindow.add(humidityIcon);
 mainWindow.add(humidityText);
@@ -81,7 +91,6 @@ mainWindow.setTemperature = function(thermostat) {
 mainWindow.setHumidity = function(percentage) {
   humidityText.text(percentage+'%');
 };
-
 
 mainWindow.displayHold = function(thermostat) {
   var hasHold = Utils.hasHold(thermostat);
@@ -105,6 +114,7 @@ mainWindow.setHeatMode = function(thermostat) {
   var heatHold;
   var coolHold;
   if (hvacMode==='heat' || hvacMode==='auxHeatOnly') {
+    modeText.text('HEAT');
     imageName = 'images/bg-heat.png';
     if (thermostat.settings.useCelsius) {
       heatHold = Utils.canonicalToCelsius(thermostat.runtime.desiredHeat).toPrecision(3);
@@ -113,6 +123,7 @@ mainWindow.setHeatMode = function(thermostat) {
     }
     holdTemp1 = Elements.holdTempHeat(heatHold, new Vector2(118, 72));
   } else if (hvacMode==='cool') {
+    modeText.text('COOL');
     imageName = 'images/bg-cool.png';
     if (thermostat.settings.useCelsius) {
       coolHold = Utils.canonicalToCelsius(thermostat.runtime.desiredCool).toPrecision(3);
@@ -121,6 +132,7 @@ mainWindow.setHeatMode = function(thermostat) {
     }
     holdTemp1 = Elements.holdTempCool(coolHold, new Vector2(118, 72));
   } else if (hvacMode==='auto') {
+    modeText.text('AUTO');
     imageName = 'images/bg-auto.png';
     if (thermostat.settings.useCelsius) {
       coolHold = Utils.canonicalToCelsius(thermostat.runtime.desiredCool).toPrecision(3);
@@ -131,6 +143,8 @@ mainWindow.setHeatMode = function(thermostat) {
     }
     holdTemp1 = Elements.holdTempCool(coolHold, new Vector2(118, 54));
     holdTemp2 = Elements.holdTempHeat(heatHold, new Vector2(118, 87));
+  } else {
+    modeText.text('OFF');
   }
   if (heatModeImage && heatModeImage.image!=imageName) {
     console.log('removing old image');
