@@ -29,6 +29,11 @@
                 "type": "font"
             },
             {
+                "file": "images/humidity-icon.png",
+                "name": "IMAGES_HUMIDITY_ICON_PNG",
+                "type": "bitmap"
+            },
+            {
                 "file": "images/bg-heat.png",
                 "name": "IMAGES_BG_HEAT_PNG",
                 "type": "bitmap"

@@ -22,13 +22,19 @@ var nameText = new UI.Text({
   textAlign: 'left'
 });
 
+var humidityIcon = new UI.Image({
+      position: new Vector2(50, 40),
+      size: new Vector2(20, 20),
+      image: 'images/humidity-icon.png'
+});
+
 var humidityText = new UI.Text({
-  position: new Vector2(0, 40),
-  size: new Vector2(144, 20),
+  position: new Vector2(70, 40),
+  size: new Vector2(74, 20),
   text: '',
   font: 'gothic-18',
   color: 'white',
-  textAlign: 'center'
+  textAlign: 'left'
 });
 
 var temperatureText = new UI.Text({
@@ -56,6 +62,7 @@ var holdTemp2;
 var myTstat;
 
 mainWindow.add(nameText);
+mainWindow.add(humidityIcon);
 mainWindow.add(humidityText);
 mainWindow.add(temperatureText);
 mainWindow.add(holdText);
