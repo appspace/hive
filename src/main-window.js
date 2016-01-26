@@ -29,8 +29,8 @@ var humidityIcon = new UI.Image({
 });
 
 var humidityText = new UI.Text({
-  position: new Vector2(70, 40),
-  size: new Vector2(74, 20),
+  position: new Vector2(70, 38),
+  size: new Vector2(74, 18),
   text: '',
   font: 'gothic-18',
   color: 'white',
