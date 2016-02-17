@@ -116,6 +116,7 @@ mainWindow.setHeatMode = function(thermostat) {
   if (hvacMode==='heat' || hvacMode==='auxHeatOnly') {
     modeText.color(Pebble.getActiveWatchInfo().platform==='aplite'?'white':'#FF5500');
     modeText.text('HEAT');
+    console.log('Mode text: '+modeText.text()+'; color: '+modeText.color());
     imageName = 'images/bg-heat.png';
     if (thermostat.settings.useCelsius) {
       heatHold = Utils.canonicalToCelsius(thermostat.runtime.desiredHeat).toPrecision(3);
@@ -126,6 +127,7 @@ mainWindow.setHeatMode = function(thermostat) {
   } else if (hvacMode==='cool') {
     modeText.color(Pebble.getActiveWatchInfo().platform==='aplite'?'white':'#00AAFF');
     modeText.text('COOL');
+    console.log('Mode text: '+modeText.text()+'; color: '+modeText.color());
     imageName = 'images/bg-cool.png';
     if (thermostat.settings.useCelsius) {
       coolHold = Utils.canonicalToCelsius(thermostat.runtime.desiredCool).toPrecision(3);
@@ -136,6 +138,7 @@ mainWindow.setHeatMode = function(thermostat) {
   } else if (hvacMode==='auto') {
     modeText.color('white');
     modeText.text('AUTO');
+    console.log('Mode text: '+modeText.text()+'; color: '+modeText.color());
     imageName = 'images/bg-auto.png';
     if (thermostat.settings.useCelsius) {
       coolHold = Utils.canonicalToCelsius(thermostat.runtime.desiredCool).toPrecision(3);
@@ -149,6 +152,7 @@ mainWindow.setHeatMode = function(thermostat) {
   } else {
     modeText.color('white');
     modeText.text('OFF');
+    console.log('Mode text: '+modeText.text()+'; color: '+modeText.color());
   }
   if (heatModeImage && heatModeImage.image!=imageName) {
     console.log('removing old image');
