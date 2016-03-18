@@ -62,17 +62,18 @@ this.exports = {
       menu.hide();
       menu = null;
     }
-    var menuItems;
+    var menuItems = [];
     var hasHold = Utils.hasHold(thermostat);
     var hasSensors = Utils.hasSensors(thermostat);
     if (hasHold) {
-      menuItems = [{ title: 'Resume Program' }, { title: 'Home and Hold' }, { title: 'Away and Hold'}, { title: 'Sleep and Hold'}];
-    } else {
-      menuItems = [{ title: 'Home and Hold' }, { title: 'Away and Hold'}, { title: 'Sleep and Hold'}];
-    }
+      menuItems.push({ title: 'Resume Program' });
+    } 
     if (hasSensors) {
       menuItems.push({title: 'Sensors'});
-    }
+    } 
+    menuItems.push({ title: 'Home and Hold' });
+    menuItems.push({ title: 'Away and Hold'});
+    menuItems.push({ title: 'Sleep and Hold'});
     menu = new UI.Menu({
       fullscreen: true, 
       backgroundColor: '#555555',
