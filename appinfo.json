@@ -57,12 +57,12 @@
         ]
     },
     "sdkVersion": "3",
-    "shortName": "Hive",
+    "shortName": "Hive dev",
     "targetPlatforms": [
         "aplite",
         "basalt"
     ],
-    "uuid": "4e475ece-7659-4ecf-9cc7-57964455b0ba",
+    "uuid": "1da7a68a-b0e7-4a3a-8b03-dea5494f3bba",
     "versionCode": 1,
     "versionLabel": "1.0",
     "watchapp": {
