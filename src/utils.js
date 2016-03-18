@@ -102,5 +102,11 @@ this.exports = {
       }
     }
     return false;
+  },
+  
+  hasSensors: function(thermostat) {
+    return true; //TODO: Fixme!
   }
+  
+  
 };

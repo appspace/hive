@@ -64,10 +64,14 @@ this.exports = {
     }
     var menuItems;
     var hasHold = Utils.hasHold(thermostat);
+    var hasSensors = Utils.hasSensors(thermostat);
     if (hasHold) {
       menuItems = [{ title: 'Resume Program' }, { title: 'Home and Hold' }, { title: 'Away and Hold'}, { title: 'Sleep and Hold'}];
     } else {
       menuItems = [{ title: 'Home and Hold' }, { title: 'Away and Hold'}, { title: 'Sleep and Hold'}];
+    }
+    if (hasSensors) {
+      menuItems.push({title: 'Sensors'});
     }
     menu = new UI.Menu({
       fullscreen: true, 

@@ -13,7 +13,7 @@ var defaultSettings = {
   authPin: null,
   authCode: null,
   authExpires: null,
-  clientId: '8PX3jpIol6AfAnRxEVvchojf5EfyMG4X' 
+  clientId: 'fTczDCPoh08p5ghGaqYwoYtQo3uzUzjo' 
 };
 
 var initialCheck = function() {
