@@ -1,4 +1,8 @@
 # Hive
+
+
+----------
+
 Hive is an application to control your [ecobee](www.ecobee.com) thermostat from [pebble](www.pebble.com) smartwatch!
 
 The application has been [released](https://apps.getpebble.com/en_US/application/56c3897cf3dab7ddce00001c) in February 2016. 
@@ -27,3 +31,6 @@ Currently following functionality is being in development:
  - Sensor support
  - Support for multiple thermostats
 
+
+----------
+Support the development, [donate if you like the app!](https://www.paypal.me/appspace)
