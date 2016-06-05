@@ -78,6 +78,18 @@ mainWindow.add(temperatureText);
 mainWindow.add(holdText);
 
 mainWindow.setTstatName = function(text) {
+  if (Pebble.getActiveWatchInfo().platform==='chalk') {
+    nameText.position(new Vector2(54, 2));
+    nameText.size(new Vector2(90, 18));
+    //nameText.textAlign('center');
+    if (text.length>10) {
+      text = text.substring(0, 9)+'...';
+    }
+  } else {
+    if (text.length>15) {
+      text = text.substring(0, 14)+'...';
+    }
+  }
   nameText.text(text);  
 };
 mainWindow.setTemperature = function(thermostat) {
