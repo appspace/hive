@@ -68,9 +68,9 @@ this.exports = {
     if (hasHold) {
       menuItems.push({ title: 'Resume Program' });
     } 
-    if (hasSensors) {
-      menuItems.push({title: 'Sensors'});
-    } 
+//    if (hasSensors) {
+ //     menuItems.push({title: 'Sensors'});
+ //   } 
     menuItems.push({ title: 'Home and Hold' });
     menuItems.push({ title: 'Away and Hold'});
     menuItems.push({ title: 'Sleep and Hold'});
