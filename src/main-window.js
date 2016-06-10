@@ -257,12 +257,12 @@ function animateHoldTempText(delta) {
 
 mainWindow.on('click', 'up', function(event) { 
   animateHoldTempText(-20);
-  changeTemperature(20);
+  changeTemperature(10);
 });
 
 mainWindow.on('click', 'down', function(event) {
   animateHoldTempText(20);
-  changeTemperature(-20);
+  changeTemperature(-10);
 });
 
 mainWindow.on('click', 'select', function(event) {
