@@ -5,7 +5,9 @@ this.exports = {
   },
   
   canonicalToCelsius: function(canonical) {
-    return (canonical/10-32)*5/9;
+    var result = Math.round(2*(canonical/10-32)*5/9)/2;
+    //console.log('Converted canonical '+canonical+' to '+result+'C');
+    return result;
   },
   
   createTemperatureHoldEvent: function(thermostat, newHeat, newCold) {
