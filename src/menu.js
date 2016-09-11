@@ -11,7 +11,7 @@ var resumeProgram = function(thermostat) {
   var postRequest = Utils.createResumeProgramEvent(thermostat);
   ecobeeApi.postThermostat(postRequest, 
     function() {
-      console.log('Succesfully resumed program!');
+      console.log('Successfully resumed program!');
       if (menu) menu.hide();
     }, 
     function(error) {
@@ -23,7 +23,7 @@ var homeHold = function(thermostat) {
   var postRequest = Utils.createHomeHoldEvent(thermostat);
   ecobeeApi.postThermostat(postRequest, 
     function() {
-      console.log('Succesfully set home hold!');
+      console.log('Successfully set home hold!');
       if (menu) menu.hide();
     }, 
     function(error) {
@@ -35,7 +35,7 @@ var awayHold = function(thermostat) {
   var postRequest = Utils.createAwayHoldEvent(thermostat);
   ecobeeApi.postThermostat(postRequest, 
     function() {
-      console.log('Succesfully set away hold!');
+      console.log('Successfully set away hold!');
       if (menu) menu.hide();
     }, 
     function(error) {
@@ -47,7 +47,7 @@ var sleepHold = function(thermostat) {
   var postRequest = Utils.createSleepHoldEvent(thermostat);
   ecobeeApi.postThermostat(postRequest, 
     function() {
-      console.log('Succesfully set sleep hold!');
+      console.log('Successfully set sleep hold!');
       if (menu) menu.hide();
     }, 
     function(error) {
