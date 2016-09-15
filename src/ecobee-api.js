@@ -4,12 +4,13 @@ var ajax = require('ajax');
 
 var jsonRequest = {
     "selection": {
-      "includeAlerts": "false",
-      "selectionType": "registered",
-      "selectionMatch": "",
-      "includeEvents": "true",
-      "includeSettings": "true",
-      "includeRuntime": "true"
+        "includeAlerts": "false",
+        "selectionType": "registered",
+        "selectionMatch": "",
+        "includeEvents": "true",
+        "includeSettings": "true",
+        "includeRuntime": "true",
+        "includeSensors": "true"
     }
 };
 
@@ -18,7 +19,6 @@ var cacheExpiration;
 
 this.exports = {
   loadThermostat: function(tstatId, onSuccess, onError) {
-    //TODO: Add caching
     if (Date.now()>cacheExpiration) {
       console.log('Cache expired');
       cache = null;

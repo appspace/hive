@@ -55,6 +55,31 @@ var sleepHold = function(thermostat) {
     });
 };
 
+var showSensorsMenu = function(thermostat) {
+  if (menu) {
+    menu.hide();
+    menu = null;
+  }
+  var menuItems = [];
+  thermostat.remoteSensors.forEach(
+      function(sensor) {
+        menuItems.push({title: 'sensor '+sensor.name});
+      }
+  );
+  menuItems.push({title: 'Sensor 3, 29C'});
+
+  menu = new UI.Menu({
+    fullscreen: true,
+    backgroundColor: '#555555',
+    textColor: 'white',
+    highlightBackgroundColor: 'black',
+    highlightTextColor: '#AAFF00',
+    sections: [{
+      items: menuItems
+    }]
+  });
+  menu.show();
+}
 
 this.exports = {
   show: function(thermostat) {
@@ -68,9 +93,9 @@ this.exports = {
     if (hasHold) {
       menuItems.push({ title: 'Resume Program' });
     } 
-//    if (hasSensors) {
- //     menuItems.push({title: 'Sensors'});
- //   } 
+    if (hasSensors) {
+      menuItems.push({title: 'Sensors'});
+    }
     menuItems.push({ title: 'Home and Hold' });
     menuItems.push({ title: 'Away and Hold'});
     menuItems.push({ title: 'Sleep and Hold'});
@@ -96,6 +121,8 @@ this.exports = {
           awayHold(thermostat);
         } else if (title==='Sleep and Hold') {
           sleepHold(thermostat);
+        } else if (title==='Sensors') {
+          showSensorsMenu(thermostat);
         }
       }
     });
