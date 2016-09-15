@@ -64,24 +64,26 @@ var showSensorsMenu = function(thermostat) {
   thermostat.remoteSensors.forEach(
       function(sensor) {
           if (sensor.type ==='ecobee3_remote_sensor') {
-              var temp;
-              for (var cap in sensor.capability) {
+              var sensorName = sensor.name;
+              if (sensorName.length>11) {
+                   sensorName = sensorName.substring(0, 11);
+              }
+              for (var idx in sensor.capability) {
+                  var cap = sensor.capability[idx];
                   if (cap.type==='temperature') {
                       if (thermostat.settings.useCelsius) {
-                          temp = Utils.canonicalToCelsius(cap.value).toPrecision(3);
+                          sensorName = sensorName + ' ' + Utils.canonicalToCelsius(cap.value).toPrecision(3)+'\u00B0';
                       } else {
-                          temp = Utils.canonicalToFahrenheit(cap.value).toPrecision(3);
+                          sensorName = sensorName + ' ' +Utils.canonicalToFahrenheit(cap.value).toPrecision(3)+'\u00B0';
                       }
                   }
-              };
+              }
               menuItems.push({
-                    title: sensor.name,
-                    subtitle: temp
+                title: sensorName
               });
           }
       }
   );
-  menuItems.push({title: 'Sensor 3, 29C'});
 
   menu = new UI.Menu({
     backgroundColor: '#555555',
@@ -104,12 +106,12 @@ this.exports = {
     var menuItems = [];
     var hasHold = Utils.hasHold(thermostat);
     var hasSensors = Utils.hasSensors(thermostat);
-    if (hasHold) {
-      menuItems.push({ title: 'Resume Program' });
-    } 
     if (hasSensors) {
       menuItems.push({title: 'Sensors'});
     }
+    if (hasHold) {
+      menuItems.push({ title: 'Resume Program' });
+    } 
     menuItems.push({ title: 'Home and Hold' });
     menuItems.push({ title: 'Away and Hold'});
     menuItems.push({ title: 'Sleep and Hold'});
