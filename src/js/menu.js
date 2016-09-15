@@ -63,13 +63,27 @@ var showSensorsMenu = function(thermostat) {
   var menuItems = [];
   thermostat.remoteSensors.forEach(
       function(sensor) {
-        menuItems.push({title: 'sensor '+sensor.name});
+          if (sensor.type ==='ecobee3_remote_sensor') {
+              var temp;
+              for (var cap in sensor.capability) {
+                  if (cap.type==='temperature') {
+                      if (thermostat.settings.useCelsius) {
+                          temp = Utils.canonicalToCelsius(cap.value).toPrecision(3);
+                      } else {
+                          temp = Utils.canonicalToFahrenheit(cap.value).toPrecision(3);
+                      }
+                  }
+              };
+              menuItems.push({
+                    title: sensor.name,
+                    subtitle: temp
+              });
+          }
       }
   );
   menuItems.push({title: 'Sensor 3, 29C'});
 
   menu = new UI.Menu({
-    fullscreen: true,
     backgroundColor: '#555555',
     textColor: 'white',
     highlightBackgroundColor: 'black',
@@ -79,7 +93,7 @@ var showSensorsMenu = function(thermostat) {
     }]
   });
   menu.show();
-}
+};
 
 this.exports = {
   show: function(thermostat) {
@@ -100,7 +114,6 @@ this.exports = {
     menuItems.push({ title: 'Away and Hold'});
     menuItems.push({ title: 'Sleep and Hold'});
     menu = new UI.Menu({
-      fullscreen: true, 
       backgroundColor: '#555555',
       textColor: 'white',
       highlightBackgroundColor: 'black',
