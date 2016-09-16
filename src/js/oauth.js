@@ -102,6 +102,7 @@ var doGetPin = function(onSuccess) {
     var authUrl = Settings.data('ecobeeServerUrl')+
         '/authorize?response_type=ecobeePin&scope=smartWrite&client_id='+
         Settings.data('clientId');
+    console.log('Calling '+authUrl);
     ajax(
         {
           url: authUrl,
