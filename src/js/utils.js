@@ -107,8 +107,11 @@ this.exports = {
   },
   
   hasSensors: function(thermostat) {
-    return true; //TODO: Fixme!
+    thermostat.remoteSensors.forEach(
+      function(sensor) {
+          if (sensor.type ==='ecobee3_remote_sensor') {
+            return true;
+          }
+      });
   }
-  
-  
 };

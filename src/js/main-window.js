@@ -125,7 +125,21 @@ mainWindow.setHeatMode = function(thermostat) {
   var imageName;
   var heatHold;
   var coolHold;
-  if (hvacMode==='heat' || hvacMode==='auxHeatOnly') {
+  var heatDisabled;
+  var coolDisabled;
+  
+  thermostat.events.forEach(function(event){
+    if(event.running){
+      if(event.isCoolOff){
+        coolDisabled = true;
+      }
+      if(event.isHeatOff){
+        heatDisabled = true;
+      }
+    }
+  });
+  
+  if (((hvacMode==='heat' || hvacMode==='auxHeatOnly') && !heatDisabled) || (hvacMode==='auto' && coolDisabled)) {
     modeText.color(Pebble.getActiveWatchInfo().platform==='aplite'?'white':'#FF5500');
     modeText.text('HEAT');
     imageName = 'images/bg-heat.png';
@@ -135,7 +149,7 @@ mainWindow.setHeatMode = function(thermostat) {
       heatHold = Utils.canonicalToFahrenheit(thermostat.runtime.desiredHeat).toPrecision(2);
     }
     holdTemp1 = Elements.holdTempHeat(heatHold, new Vector2(118, 72));
-  } else if (hvacMode==='cool') {
+  } else if ((hvacMode==='cool' && !coolDisabled) || (hvacMode==='auto' && heatDisabled)) {
     modeText.color(Pebble.getActiveWatchInfo().platform==='aplite'?'white':'#00AAFF');
     modeText.text('COOL');
     imageName = 'images/bg-cool.png';
