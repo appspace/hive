@@ -139,7 +139,7 @@ mainWindow.setHeatMode = function(thermostat) {
     }
   });
   
-  if (((hvacMode==='heat' || hvacMode==='auxHeatOnly') && !heatDisabled) || (hvacMode==='auto' && coolDisabled)) {
+  if ((hvacMode==='heat' || hvacMode==='auxHeatOnly') && !heatDisabled) {
     modeText.color(Pebble.getActiveWatchInfo().platform==='aplite'?'white':'#FF5500');
     modeText.text('HEAT');
     imageName = 'images/bg-heat.png';
@@ -149,7 +149,7 @@ mainWindow.setHeatMode = function(thermostat) {
       heatHold = Utils.canonicalToFahrenheit(thermostat.runtime.desiredHeat).toPrecision(2);
     }
     holdTemp1 = Elements.holdTempHeat(heatHold, new Vector2(118, 72));
-  } else if ((hvacMode==='cool' && !coolDisabled) || (hvacMode==='auto' && heatDisabled)) {
+  } else if (hvacMode==='cool' && !coolDisabled) {
     modeText.color(Pebble.getActiveWatchInfo().platform==='aplite'?'white':'#00AAFF');
     modeText.text('COOL');
     imageName = 'images/bg-cool.png';
@@ -164,11 +164,11 @@ mainWindow.setHeatMode = function(thermostat) {
     modeText.text('AUTO');
     imageName = 'images/bg-auto.png';
     if (thermostat.settings.useCelsius) {
-      coolHold = Utils.canonicalToCelsius(thermostat.runtime.desiredCool).toPrecision(3);
-      heatHold = Utils.canonicalToCelsius(thermostat.runtime.desiredHeat).toPrecision(3);
+      coolHold = !coolDisabled ? Utils.canonicalToCelsius(thermostat.runtime.desiredCool).toPrecision(3) : 'Off';
+      heatHold = !heatDisabled ? Utils.canonicalToCelsius(thermostat.runtime.desiredHeat).toPrecision(3) : 'Off';
     } else {
-      coolHold = Utils.canonicalToFahrenheit(thermostat.runtime.desiredCool).toPrecision(2);
-      heatHold = Utils.canonicalToFahrenheit(thermostat.runtime.desiredHeat).toPrecision(2);
+      coolHold = !coolDisabled ? Utils.canonicalToFahrenheit(thermostat.runtime.desiredCool).toPrecision(2) : 'Off';
+      heatHold = !heatDisabled ? Utils.canonicalToFahrenheit(thermostat.runtime.desiredHeat).toPrecision(2) : 'Off';
     }
     holdTemp1 = Elements.holdTempCool(coolHold, new Vector2(118, 54));
     holdTemp2 = Elements.holdTempHeat(heatHold, new Vector2(118, 87));
