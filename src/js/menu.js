@@ -78,7 +78,7 @@ var showSensorsMenu = function(thermostat) {
               }
             }
             if(cap.type==='occupancy'){
-              occupied = cap.value ? 'Occupied' : 'Unoccupied';
+              occupied = cap.value === 'true' ? 'Occupied' : 'Unoccupied';
             }
           }
           menuItems.push({

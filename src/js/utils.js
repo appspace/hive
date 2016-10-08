@@ -107,11 +107,14 @@ this.exports = {
   },
   
   hasSensors: function(thermostat) {
+    var hasSensors = false;
     thermostat.remoteSensors.forEach(
       function(sensor) {
+          console.log(JSON.stringify(sensor));
           if (sensor.type ==='ecobee3_remote_sensor') {
-            return true;
+            hasSensors = true;
           }
       });
+    return hasSensors;
   }
 };
