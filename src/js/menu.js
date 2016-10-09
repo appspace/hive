@@ -83,10 +83,23 @@ var showSensorsMenu = function(thermostat) {
           }
           menuItems.push({
             title: sensorName,
-            subtitle: occupied
+            subtitle: occupied,
+            type: sensor.type
           });
       }
   );
+  
+  menuItems = menuItems.sort(function(a,b){
+    if(a.type === 'thermostat'){
+      return -1;
+    }
+    else if (b.type === 'thermostat'){
+      return 1;
+    }
+    else{
+      return a.title.toUpperCase() > b.title.toUpperCase() ? 1 : -1;
+    }
+  });
 
   menu = new UI.Menu({
     backgroundColor: '#555555',
