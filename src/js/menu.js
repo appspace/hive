@@ -63,27 +63,43 @@ var showSensorsMenu = function(thermostat) {
   var menuItems = [];
   thermostat.remoteSensors.forEach(
       function(sensor) {
-          if (sensor.type ==='ecobee3_remote_sensor') {
-              var sensorName = sensor.name;
-              if (sensorName.length>11) {
-                   sensorName = sensorName.substring(0, 11);
-              }
-              for (var idx in sensor.capability) {
-                  var cap = sensor.capability[idx];
-                  if (cap.type==='temperature') {
-                      if (thermostat.settings.useCelsius) {
-                          sensorName = sensorName + ' ' + Utils.canonicalToCelsius(cap.value).toPrecision(3)+'\u00B0';
-                      } else {
-                          sensorName = sensorName + ' ' +Utils.canonicalToFahrenheit(cap.value).toPrecision(3)+'\u00B0';
-                      }
-                  }
-              }
-              menuItems.push({
-                title: sensorName
-              });
+          var sensorName = sensor.name;
+          var occupied;
+          if (sensorName.length>11) {
+            sensorName = sensorName.substring(0, 11);
           }
+          for (var idx in sensor.capability) {
+            var cap = sensor.capability[idx];
+            if (cap.type==='temperature') {
+              if (thermostat.settings.useCelsius) {
+                sensorName = sensorName + ' ' + Utils.canonicalToCelsius(cap.value).toPrecision(3)+'\u00B0';
+              } else {
+                sensorName = sensorName + ' ' +Utils.canonicalToFahrenheit(cap.value).toPrecision(3)+'\u00B0';
+              }
+            }
+            if(cap.type==='occupancy'){
+              occupied = cap.value === 'true' ? 'Occupied' : 'Unoccupied';
+            }
+          }
+          menuItems.push({
+            title: sensorName,
+            subtitle: occupied,
+            type: sensor.type
+          });
       }
   );
+  
+  menuItems = menuItems.sort(function(a,b){
+    if(a.type === 'thermostat'){
+      return -1;
+    }
+    else if (b.type === 'thermostat'){
+      return 1;
+    }
+    else{
+      return a.title.toUpperCase() > b.title.toUpperCase() ? 1 : -1;
+    }
+  });
 
   menu = new UI.Menu({
     backgroundColor: '#555555',

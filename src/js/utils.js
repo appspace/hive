@@ -107,8 +107,6 @@ this.exports = {
   },
   
   hasSensors: function(thermostat) {
-    return true; //TODO: Fixme!
+    return thermostat.remoteSensors && thermostat.remoteSensors.length;
   }
-  
-  
 };
