@@ -139,10 +139,8 @@ var showThermostatsMenu = function(thermostatList){
 };
 
 this.exports = {
-  show: function(thermostatList) {
-    
+  show: function(thermostatList) {   
     if(!menu){
-      console.log('creating menu');
       var thermostat;
       var selectedThermostatId = Settings.data('selectedThermostatId');
       if(selectedThermostatId){
@@ -190,8 +188,7 @@ this.exports = {
             sleepHold(thermostat);
           } else if (title==='Sensors') {
             showSensorsMenu(thermostat);
-          }
-          else if (title==='Thermostats') {
+          } else if (title==='Thermostats') {
             showThermostatsMenu(thermostatList);
           }
         }

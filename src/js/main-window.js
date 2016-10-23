@@ -9,6 +9,8 @@ var Elements = require('elements');
 var Feature = require('platform/feature');
 var Settings = require('settings');
 
+Accel.init();
+
 var mainWindow = new UI.Window({
   status: false,
   scrollable: false, 
@@ -222,10 +224,6 @@ var refreshData = function() {
       });
 };
 
-mainWindow.on('click', 'select', function(event) {
-  refreshData();
-});
-
 var changeTemperature = function(delta) {
   var hvacMode = myTstat.settings.hvacMode;
   var newHeatHold = myTstat.runtime.desiredHeat+delta;
@@ -295,34 +293,16 @@ mainWindow.on('click', 'select', function(event) {
 
 mainWindow.on('show', function(event) {
   console.log('Show event on main winow');
-  ecobeeApi.loadThermostats(
-      function(thermostatList) {
-        myThermostatList = thermostatList;
-        var selectedThermostatId = Settings.data('selectedThermostatId');
-        console.log('selectedThermostatId: ' + selectedThermostatId);
-        if(selectedThermostatId){
-          myTstat = Utils.selectThermostat(selectedThermostatId,thermostatList);
-        }
-        else{
-          myTstat = thermostatList[0];
-        }
-        mainWindow.setTstatName(myTstat.name);
-        mainWindow.setTemperature(myTstat);
-        mainWindow.setHumidity(myTstat.runtime.actualHumidity);
-        mainWindow.setHeatMode(myTstat);
-        mainWindow.displayHold(myTstat);
-        Accel.init();
-        mainWindow.on('accelTap', function(e) {
-          refreshData();
-        });
-      }, 
-      function(error) {
-            ErrorWindow.show('Cannot load thermostat data');
-      });
+  refreshData();
+  
+  mainWindow.on('accelTap', function(e) {
+    refreshData();
+  });
 });
 
 mainWindow.on('hide', function(event) {
   console.log('Hiding main window');
+  mainWindow.off('accelTap');
 });
 
 this.exports = {
