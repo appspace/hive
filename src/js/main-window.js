@@ -6,6 +6,7 @@ var Accel = require('ui/accel');
 var Utils = require('utils');
 var Menu = require('menu');
 var Elements = require('elements');
+var Feature = require('platform/feature');
 
 var mainWindow = new UI.Window({
   fullscreen: true, 
@@ -78,7 +79,7 @@ mainWindow.add(temperatureText);
 mainWindow.add(holdText);
 
 mainWindow.setTstatName = function(text) {
-  if (Pebble.getActiveWatchInfo().platform==='chalk') {
+  if (Feature.round()) {
     nameText.position(new Vector2(54, 2));
     nameText.size(new Vector2(90, 18));
     //nameText.textAlign('center');
@@ -140,7 +141,7 @@ mainWindow.setHeatMode = function(thermostat) {
   });
   
   if ((hvacMode==='heat' || hvacMode==='auxHeatOnly') && !heatDisabled) {
-    modeText.color(Pebble.getActiveWatchInfo().platform==='aplite'?'white':'#FF5500');
+    modeText.color(Feature.color('#FF5500', 'white'));
     modeText.text('HEAT');
     imageName = 'images/bg-heat.png';
     if (thermostat.settings.useCelsius) {
@@ -150,7 +151,7 @@ mainWindow.setHeatMode = function(thermostat) {
     }
     holdTemp1 = Elements.holdTempHeat(heatHold, new Vector2(118, 72));
   } else if (hvacMode==='cool' && !coolDisabled) {
-    modeText.color(Pebble.getActiveWatchInfo().platform==='aplite'?'white':'#00AAFF');
+    modeText.color(Feature.color('#00AAFF', 'white'));
     modeText.text('COOL');
     imageName = 'images/bg-cool.png';
     if (thermostat.settings.useCelsius) {

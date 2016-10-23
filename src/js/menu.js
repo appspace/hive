@@ -1,8 +1,5 @@
 var UI = require('ui');
-var Vector2 = require('vector2');
 var ecobeeApi = require('ecobee-api');
-var ErrorWindow = require('error-window');
-var Accel = require('ui/accel');
 var Utils = require('utils');
 
 var menu;
