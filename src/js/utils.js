@@ -108,5 +108,13 @@ this.exports = {
   
   hasSensors: function(thermostat) {
     return thermostat.remoteSensors && thermostat.remoteSensors.length;
+  },
+  
+  selectThermostat: function(thermostatId ,thermostatList){
+    for (var index = 0; index < thermostatList.length; ++index) {
+       if(thermostatList[index].identifier === thermostatId){
+         return thermostatList[index];
+       }
+    }
   }
 };

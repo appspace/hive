@@ -7,9 +7,10 @@ var Utils = require('utils');
 var Menu = require('menu');
 var Elements = require('elements');
 var Feature = require('platform/feature');
+var Settings = require('settings');
 
 var mainWindow = new UI.Window({
-  fullscreen: true, 
+  status: false,
   scrollable: false, 
   clear: false
 });
@@ -70,6 +71,7 @@ var heatModeImage;
 var holdTemp1;
 var holdTemp2;
 var myTstat;
+var myThermostatList;
 
 mainWindow.add(modeText);
 mainWindow.add(nameText);
@@ -199,9 +201,16 @@ mainWindow.setHeatMode = function(thermostat) {
 };
 
 var refreshData = function() {
-  ecobeeApi.loadThermostat(null, 
-      function(thermostat) {
-        myTstat = thermostat;
+  ecobeeApi.loadThermostats( 
+      function(thermostatList) {
+        myThermostatList = thermostatList;
+        var selectedThermostatId = Settings.data('selectedThermostatId');
+        if(selectedThermostatId){
+          myTstat = Utils.selectThermostat(selectedThermostatId,thermostatList);
+        }
+        else{
+          myTstat = thermostatList[0];
+        }
         mainWindow.setTstatName(myTstat.name);
         mainWindow.setTemperature(myTstat);
         mainWindow.setHumidity(myTstat.runtime.actualHumidity);
@@ -281,23 +290,31 @@ mainWindow.on('click', 'down', function(event) {
 });
 
 mainWindow.on('click', 'select', function(event) {
-  Menu.show(myTstat);
+  Menu.show(myThermostatList);
 });
 
 mainWindow.on('show', function(event) {
   console.log('Show event on main winow');
-  ecobeeApi.loadThermostat(null, 
-      function(thermostat) {
-            myTstat = thermostat;
-            mainWindow.setTstatName(myTstat.name);
-            mainWindow.setTemperature(myTstat);
-            mainWindow.setHumidity(myTstat.runtime.actualHumidity);
-            mainWindow.setHeatMode(myTstat);
-            mainWindow.displayHold(myTstat);
-            Accel.init();
-            mainWindow.on('accelTap', function(e) {
-              refreshData();
-            });
+  ecobeeApi.loadThermostats(
+      function(thermostatList) {
+        myThermostatList = thermostatList;
+        var selectedThermostatId = Settings.data('selectedThermostatId');
+        console.log('selectedThermostatId: ' + selectedThermostatId);
+        if(selectedThermostatId){
+          myTstat = Utils.selectThermostat(selectedThermostatId,thermostatList);
+        }
+        else{
+          myTstat = thermostatList[0];
+        }
+        mainWindow.setTstatName(myTstat.name);
+        mainWindow.setTemperature(myTstat);
+        mainWindow.setHumidity(myTstat.runtime.actualHumidity);
+        mainWindow.setHeatMode(myTstat);
+        mainWindow.displayHold(myTstat);
+        Accel.init();
+        mainWindow.on('accelTap', function(e) {
+          refreshData();
+        });
       }, 
       function(error) {
             ErrorWindow.show('Cannot load thermostat data');
