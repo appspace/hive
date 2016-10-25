@@ -140,60 +140,58 @@ var showThermostatsMenu = function(thermostatList){
 
 this.exports = {
   show: function(thermostatList) {   
-    if(!menu){
-      var thermostat;
-      var selectedThermostatId = Settings.data('selectedThermostatId');
-      if(selectedThermostatId){
-        thermostat = Utils.selectThermostat(selectedThermostatId,thermostatList);
-      }
-      else{
-        thermostat = thermostatList[0];
-      }
-      
-      var menuItems = [];
-      var hasHold = Utils.hasHold(thermostat);
-      var hasSensors = Utils.hasSensors(thermostat);
-      if(thermostatList.length > 1){
-        menuItems.push({title: 'Thermostats'});
-      }
-      if (hasSensors) {
-        menuItems.push({title: 'Sensors'});
-      }
-      if (hasHold) {
-        menuItems.push({ title: 'Resume Program' });
-      } 
-      menuItems.push({ title: 'Home and Hold' });
-      menuItems.push({ title: 'Away and Hold'});
-      menuItems.push({ title: 'Sleep and Hold'});
-      menu = new UI.Menu({
-        backgroundColor: '#555555',
-        textColor: 'white',
-        highlightBackgroundColor: 'black',
-        highlightTextColor: '#AAFF00',
-        sections: [{
-          items: menuItems
-        }]
-      });
-      menu.on('select', function(e) {
-        var title = e.item.title;
-        console.log('Selected item "' + title + '"');
-        if (title) {
-          if (title==='Resume Program') {
-            resumeProgram(thermostat);
-          } else if (title==='Home and Hold') {
-            homeHold(thermostat);
-          } else if (title==='Away and Hold') {
-            awayHold(thermostat);
-          } else if (title==='Sleep and Hold') {
-            sleepHold(thermostat);
-          } else if (title==='Sensors') {
-            showSensorsMenu(thermostat);
-          } else if (title==='Thermostats') {
-            showThermostatsMenu(thermostatList);
-          }
-        }
-      });
+    var thermostat;
+    var selectedThermostatId = Settings.data('selectedThermostatId');
+    if(selectedThermostatId){
+      thermostat = Utils.selectThermostat(selectedThermostatId,thermostatList);
     }
+    else{
+      thermostat = thermostatList[0];
+    }
+
+    var menuItems = [];
+    var hasHold = Utils.hasHold(thermostat);
+    var hasSensors = Utils.hasSensors(thermostat);
+    if(thermostatList.length > 1){
+      menuItems.push({title: 'Thermostats'});
+    }
+    if (hasSensors) {
+      menuItems.push({title: 'Sensors'});
+    }
+    if (hasHold) {
+      menuItems.push({ title: 'Resume Program' });
+    } 
+    menuItems.push({ title: 'Home and Hold' });
+    menuItems.push({ title: 'Away and Hold'});
+    menuItems.push({ title: 'Sleep and Hold'});
+    menu = new UI.Menu({
+      backgroundColor: '#555555',
+      textColor: 'white',
+      highlightBackgroundColor: 'black',
+      highlightTextColor: '#AAFF00',
+      sections: [{
+        items: menuItems
+      }]
+    });
+    menu.on('select', function(e) {
+      var title = e.item.title;
+      console.log('Selected item "' + title + '"');
+      if (title) {
+        if (title==='Resume Program') {
+          resumeProgram(thermostat);
+        } else if (title==='Home and Hold') {
+          homeHold(thermostat);
+        } else if (title==='Away and Hold') {
+          awayHold(thermostat);
+        } else if (title==='Sleep and Hold') {
+          sleepHold(thermostat);
+        } else if (title==='Sensors') {
+          showSensorsMenu(thermostat);
+        } else if (title==='Thermostats') {
+          showThermostatsMenu(thermostatList);
+        }
+      }
+    });
     menu.show();
   }
 };
