@@ -72,6 +72,7 @@ var holdText = new UI.Text({
 var heatModeImage;
 var holdTemp1;
 var holdTemp2;
+var bgDots;
 var myTstat;
 var myThermostatList;
 
@@ -123,11 +124,15 @@ mainWindow.displayHold = function(thermostat) {
 mainWindow.setHeatMode = function(thermostat) {
   if (holdTemp1) holdTemp1.remove();
   if (holdTemp2) holdTemp2.remove();
+  if (bgDots && bgDots.length){
+    bgDots.forEach(function(element){
+      mainWindow.remove(element);
+    });
+  }
   holdTemp1 = undefined;
   holdTemp2 = undefined;
   var hvacMode = thermostat.settings.hvacMode;
   console.log('HVac mode: '+hvacMode);
-  var imageName;
   var heatHold;
   var coolHold;
   var heatDisabled;
@@ -147,7 +152,7 @@ mainWindow.setHeatMode = function(thermostat) {
   if ((hvacMode==='heat' || hvacMode==='auxHeatOnly') && !heatDisabled) {
     modeText.color(Feature.color('#FF5500', 'white'));
     modeText.text('HEAT');
-    imageName = 'images/bg-heat.png';
+    bgDots = Elements.bgHeatDots();
     if (thermostat.settings.useCelsius) {
       heatHold = Utils.canonicalToCelsius(thermostat.runtime.desiredHeat).toPrecision(3);
     } else {
@@ -157,7 +162,7 @@ mainWindow.setHeatMode = function(thermostat) {
   } else if (hvacMode==='cool' && !coolDisabled) {
     modeText.color(Feature.color('#00AAFF', 'white'));
     modeText.text('COOL');
-    imageName = 'images/bg-cool.png';
+    bgDots = Elements.bgCoolDots();
     if (thermostat.settings.useCelsius) {
       coolHold = Utils.canonicalToCelsius(thermostat.runtime.desiredCool).toPrecision(3);
     } else {
@@ -167,7 +172,7 @@ mainWindow.setHeatMode = function(thermostat) {
   } else if (hvacMode==='auto') {
     modeText.color('white');
     modeText.text('AUTO');
-    imageName = 'images/bg-auto.png';
+    bgDots = Elements.bgAutoDots();
     if (thermostat.settings.useCelsius) {
       coolHold = !coolDisabled ? Utils.canonicalToCelsius(thermostat.runtime.desiredCool).toPrecision(3) : 'Off';
       heatHold = !heatDisabled ? Utils.canonicalToCelsius(thermostat.runtime.desiredHeat).toPrecision(3) : 'Off';
@@ -181,23 +186,11 @@ mainWindow.setHeatMode = function(thermostat) {
     modeText.color('white');
     modeText.text('OFF');
   }
-  if (heatModeImage && heatModeImage.image!=imageName) {
-    console.log('removing old image');
-    heatModeImage.remove();
-    heatModeImage = undefined;
-  }
-  if (!imageName && heatModeImage) {
-    heatModeImage.remove();
-    heatModeImage = undefined;
-  }
-  if (imageName) {
-    heatModeImage = new UI.Image({
-      position: new Vector2(126, 0),
-      size: new Vector2(18, 168),
-      image: imageName
+  if (bgDots && bgDots.length){
+    bgDots.forEach(function(element){
+      mainWindow.add(element);
     });
   }
-  if (heatModeImage) mainWindow.add(heatModeImage);
   if (holdTemp1) mainWindow.add(holdTemp1);
   if (holdTemp2) mainWindow.add(holdTemp2);
 };
