@@ -69,7 +69,6 @@ var holdText = new UI.Text({
   textAlign: 'center'  
 });
 
-var heatModeImage;
 var holdTemp1;
 var holdTemp2;
 var bgDots;
