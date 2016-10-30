@@ -184,6 +184,7 @@ mainWindow.setHeatMode = function(thermostat) {
   } else {
     modeText.color('white');
     modeText.text('OFF');
+    bgDots = null;
   }
   if (bgDots && bgDots.length){
     bgDots.forEach(function(element){
