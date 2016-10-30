@@ -94,6 +94,20 @@ this.exports = {
     };
   },
   
+  createChangeModeRequest: function(thermostat, newMode){
+     return {
+        "selection": {
+            "selectionType": "thermostats",
+            "selectionMatch": thermostat.identifier
+            },
+        "thermostat": {
+          "settings": {
+            "hvacMode": newMode
+          }
+        }
+    };
+  },
+  
   hasHold: function(thermostat) {
     if (thermostat.events && thermostat.events.length > 0) 
 		{
@@ -104,6 +118,23 @@ this.exports = {
       }
     }
     return false;
+  },
+  
+  hasHeatMode: function(thermostat) {
+    return thermostat.settings.heatStages > 0 || thermostat.settings.hasHeatPump;
+  },
+  
+  hasCoolMode: function(thermostat) {
+    return thermostat.settings.coolStages > 0 || thermostat.settings.hasHeatPump;
+  },
+  
+  hasAuxHeatMode: function(thermostat) {
+    return thermostat.settings.hasHeatPump &&
+      (thermostat.settings.hasElectric || thermostat.settings.hasBoiler || thermostat.settings.hasForcedAir);
+  },
+  
+  hasAutoMode: function(thermostat) {
+    return thermostat.settings.autoHeatCoolFeatureEnabled && this.hasCoolMode(thermostat) && this.hasHeatMode(thermostat);
   },
   
   hasSensors: function(thermostat) {
