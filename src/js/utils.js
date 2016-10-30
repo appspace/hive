@@ -113,7 +113,8 @@ this.exports = {
 		{
 			var runningEvent = thermostat.events[0];
       console.log('Running event: '+JSON.stringify(runningEvent));
-			if (runningEvent.type === 'hold' && runningEvent.running) {
+			if ((runningEvent.type === 'hold' || runningEvent.type === 'autoAway' || runningEvent.type === 'autoHome' ) && 
+          runningEvent.running) {
         return true;
       }
     }
