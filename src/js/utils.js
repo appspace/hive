@@ -10,6 +10,30 @@ this.exports = {
     return result;
   },
   
+  calculateHoldType: function(thermostatSettings){
+    switch(thermostatSettings.holdAction){
+      case 'nextPeriod':
+        return 'nextTransition';
+      case 'useEndTime4hour':
+        return 'holdHours';
+      case 'useEndTime2hour':
+        return 'holdHours';
+      default:
+        return 'indefinite';
+    } 
+  },
+  
+  calculateHoldHours: function(thermostatSettings){
+    switch(thermostatSettings.holdAction){
+      case 'useEndTime4hour':
+        return 4;
+      case 'useEndTime2hour':
+        return 2;
+      default:
+        return null;
+    } 
+  },
+  
   createTemperatureHoldEvent: function(thermostat, newHeat, newCold) {
     return {
         "selection": {
@@ -20,7 +44,8 @@ this.exports = {
             {
                 "type": "setHold",
                 "params": {
-                  "holdType": "indefinite", 
+                  "holdType": this.calculateHoldType(thermostat.settings), 
+                  "holdHours": this.calculateHoldHours(thermostat.settings),
                   "coolHoldTemp": newCold, 
                   "heatHoldTemp": newHeat
                 }
@@ -38,7 +63,7 @@ this.exports = {
           "functions": [{
             "type":"setHold",
             "params":{
-              "holdType":"nextTransition",
+              "holdType": "indefinite",
               "holdClimateRef":"away"
             }
           }]
@@ -54,7 +79,7 @@ this.exports = {
           "functions": [{
             "type":"setHold",
             "params":{
-              "holdType":"nextTransition",
+              "holdType": "indefinite",
               "holdClimateRef":"home"
             }
           }]
@@ -70,7 +95,7 @@ this.exports = {
           "functions": [{
             "type":"setHold",
             "params":{
-              "holdType":"nextTransition",
+              "holdType": "indefinite",
               "holdClimateRef":"sleep"
             }
           }]
