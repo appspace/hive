@@ -194,9 +194,6 @@ this.exports = {
     var menuItems = [];
     var hasHold = Utils.hasHold(thermostat);
     var hasSensors = Utils.hasSensors(thermostat);
-    if(thermostatList.length > 1){
-      menuItems.push({title: 'Thermostats'});
-    }
     if (hasSensors) {
       menuItems.push({title: 'Sensors'});
     }
@@ -206,6 +203,9 @@ this.exports = {
     menuItems.push({ title: 'Home and Hold' });
     menuItems.push({ title: 'Away and Hold'});
     menuItems.push({ title: 'Sleep and Hold'});
+    if(thermostatList.length > 1){
+      menuItems.push({title: 'Thermostats'});
+    }
     menuItems.push({ title: 'Change Mode'});
     menu = new UI.Menu({
       backgroundColor: '#555555',
