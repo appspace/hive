@@ -1,8 +1,6 @@
 var UI = require('ui');
-var Vector2 = require('vector2');
+var Settings = require('settings');
 var ecobeeApi = require('ecobee-api');
-var ErrorWindow = require('error-window');
-var Accel = require('ui/accel');
 var Utils = require('utils');
 
 var menu;
@@ -56,10 +54,6 @@ var sleepHold = function(thermostat) {
 };
 
 var showSensorsMenu = function(thermostat) {
-  if (menu) {
-    menu.hide();
-    menu = null;
-  }
   var menuItems = [];
   thermostat.remoteSensors.forEach(
       function(sensor) {
@@ -101,7 +95,7 @@ var showSensorsMenu = function(thermostat) {
     }
   });
 
-  menu = new UI.Menu({
+  var sensorMenu = new UI.Menu({
     backgroundColor: '#555555',
     textColor: 'white',
     highlightBackgroundColor: 'black',
@@ -110,15 +104,93 @@ var showSensorsMenu = function(thermostat) {
       items: menuItems
     }]
   });
-  menu.show();
+  sensorMenu.show();
+};
+
+var showThermostatsMenu = function(thermostatList){
+  var menuItems = [];
+  
+  thermostatList.forEach(
+    function(thermostat){
+      menuItems.push({
+        title: thermostat.name,
+        thermostatId: thermostat.identifier
+      });
+    }
+  );
+  
+  var thermostatMenu = new UI.Menu({
+    backgroundColor: '#555555',
+    textColor: 'white',
+    highlightBackgroundColor: 'black',
+    highlightTextColor: '#AAFF00',
+    sections: [{
+      items: menuItems
+    }]
+  });
+  
+  thermostatMenu.on('select', function(e) {
+    Settings.data('selectedThermostatId', e.item.thermostatId);
+    thermostatMenu.hide();
+    if (menu) menu.hide();
+  });
+  
+  thermostatMenu.show();
+};
+
+var showHvacModeMenu = function(thermostat){
+  var menuItems = [];
+  
+  if(Utils.hasHeatMode(thermostat)){
+    menuItems.push({ title: 'Heat', value: 'heat'});
+  }
+  if(Utils.hasCoolMode(thermostat)){
+    menuItems.push({ title: 'Cool', value: 'cool'});
+  }
+  if(Utils.hasAutoMode(thermostat)){
+    menuItems.push({ title: 'Auto', value: 'auto'});
+  }
+  if(Utils.hasAuxHeatMode(thermostat)){
+    menuItems.push({ title: 'Aux', value: 'auxHeatOnly'});
+  }
+  menuItems.push({ title: 'Off', value: 'off'});
+  
+  var hvacModeMenu = new UI.Menu({
+    backgroundColor: '#555555',
+    textColor: 'white',
+    highlightBackgroundColor: 'black',
+    highlightTextColor: '#AAFF00',
+    sections: [{
+      items: menuItems
+    }]
+  });
+  
+  hvacModeMenu.on('select', function(e) {
+    var postRequest = Utils.createChangeModeRequest(thermostat, e.item.value);
+    ecobeeApi.postThermostat(postRequest, 
+      function() {
+        hvacModeMenu.hide();
+        if (menu) menu.hide();
+      }, 
+      function(error) {
+        console.log('error setting hvac mode: '+error);
+    });
+  });
+  
+  hvacModeMenu.show();
 };
 
 this.exports = {
-  show: function(thermostat) {
-    if (menu) {
-      menu.hide();
-      menu = null;
+  show: function(thermostatList) {   
+    var thermostat;
+    var selectedThermostatId = Settings.data('selectedThermostatId');
+    if(selectedThermostatId){
+      thermostat = Utils.selectThermostat(selectedThermostatId,thermostatList);
     }
+    else{
+      thermostat = thermostatList[0];
+    }
+
     var menuItems = [];
     var hasHold = Utils.hasHold(thermostat);
     var hasSensors = Utils.hasSensors(thermostat);
@@ -131,6 +203,10 @@ this.exports = {
     menuItems.push({ title: 'Home and Hold' });
     menuItems.push({ title: 'Away and Hold'});
     menuItems.push({ title: 'Sleep and Hold'});
+    if(thermostatList.length > 1){
+      menuItems.push({title: 'Thermostats'});
+    }
+    menuItems.push({ title: 'Change Mode'});
     menu = new UI.Menu({
       backgroundColor: '#555555',
       textColor: 'white',
@@ -154,6 +230,10 @@ this.exports = {
           sleepHold(thermostat);
         } else if (title==='Sensors') {
           showSensorsMenu(thermostat);
+        } else if (title==='Thermostats') {
+          showThermostatsMenu(thermostatList);
+        } else if (title==='Change Mode') {
+          showHvacModeMenu(thermostat);
         }
       }
     });

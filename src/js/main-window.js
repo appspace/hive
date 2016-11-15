@@ -6,9 +6,13 @@ var Accel = require('ui/accel');
 var Utils = require('utils');
 var Menu = require('menu');
 var Elements = require('elements');
+var Feature = require('platform/feature');
+var Settings = require('settings');
+
+Accel.init();
 
 var mainWindow = new UI.Window({
-  fullscreen: true, 
+  status: false,
   scrollable: false, 
   clear: false
 });
@@ -65,10 +69,11 @@ var holdText = new UI.Text({
   textAlign: 'center'  
 });
 
-var heatModeImage;
 var holdTemp1;
 var holdTemp2;
+var bgDots;
 var myTstat;
+var myThermostatList;
 
 mainWindow.add(modeText);
 mainWindow.add(nameText);
@@ -78,7 +83,7 @@ mainWindow.add(temperatureText);
 mainWindow.add(holdText);
 
 mainWindow.setTstatName = function(text) {
-  if (Pebble.getActiveWatchInfo().platform==='chalk') {
+  if (Feature.round()) {
     nameText.position(new Vector2(54, 2));
     nameText.size(new Vector2(90, 18));
     //nameText.textAlign('center');
@@ -118,11 +123,15 @@ mainWindow.displayHold = function(thermostat) {
 mainWindow.setHeatMode = function(thermostat) {
   if (holdTemp1) holdTemp1.remove();
   if (holdTemp2) holdTemp2.remove();
+  if (bgDots && bgDots.length){
+    bgDots.forEach(function(element){
+      mainWindow.remove(element);
+    });
+  }
   holdTemp1 = undefined;
   holdTemp2 = undefined;
   var hvacMode = thermostat.settings.hvacMode;
   console.log('HVac mode: '+hvacMode);
-  var imageName;
   var heatHold;
   var coolHold;
   var heatDisabled;
@@ -140,9 +149,9 @@ mainWindow.setHeatMode = function(thermostat) {
   });
   
   if ((hvacMode==='heat' || hvacMode==='auxHeatOnly') && !heatDisabled) {
-    modeText.color(Pebble.getActiveWatchInfo().platform==='aplite'?'white':'#FF5500');
+    modeText.color(Feature.color('#FF5500', 'white'));
     modeText.text('HEAT');
-    imageName = 'images/bg-heat.png';
+    bgDots = Elements.bgHeatDots();
     if (thermostat.settings.useCelsius) {
       heatHold = Utils.canonicalToCelsius(thermostat.runtime.desiredHeat).toPrecision(3);
     } else {
@@ -150,9 +159,9 @@ mainWindow.setHeatMode = function(thermostat) {
     }
     holdTemp1 = Elements.holdTempHeat(heatHold, new Vector2(118, 72));
   } else if (hvacMode==='cool' && !coolDisabled) {
-    modeText.color(Pebble.getActiveWatchInfo().platform==='aplite'?'white':'#00AAFF');
+    modeText.color(Feature.color('#00AAFF', 'white'));
     modeText.text('COOL');
-    imageName = 'images/bg-cool.png';
+    bgDots = Elements.bgCoolDots();
     if (thermostat.settings.useCelsius) {
       coolHold = Utils.canonicalToCelsius(thermostat.runtime.desiredCool).toPrecision(3);
     } else {
@@ -162,7 +171,7 @@ mainWindow.setHeatMode = function(thermostat) {
   } else if (hvacMode==='auto') {
     modeText.color('white');
     modeText.text('AUTO');
-    imageName = 'images/bg-auto.png';
+    bgDots = Elements.bgAutoDots();
     if (thermostat.settings.useCelsius) {
       coolHold = !coolDisabled ? Utils.canonicalToCelsius(thermostat.runtime.desiredCool).toPrecision(3) : 'Off';
       heatHold = !heatDisabled ? Utils.canonicalToCelsius(thermostat.runtime.desiredHeat).toPrecision(3) : 'Off';
@@ -175,32 +184,28 @@ mainWindow.setHeatMode = function(thermostat) {
   } else {
     modeText.color('white');
     modeText.text('OFF');
+    bgDots = null;
   }
-  if (heatModeImage && heatModeImage.image!=imageName) {
-    console.log('removing old image');
-    heatModeImage.remove();
-    heatModeImage = undefined;
-  }
-  if (!imageName && heatModeImage) {
-    heatModeImage.remove();
-    heatModeImage = undefined;
-  }
-  if (imageName) {
-    heatModeImage = new UI.Image({
-      position: new Vector2(126, 0),
-      size: new Vector2(18, 168),
-      image: imageName
+  if (bgDots && bgDots.length){
+    bgDots.forEach(function(element){
+      mainWindow.add(element);
     });
   }
-  if (heatModeImage) mainWindow.add(heatModeImage);
   if (holdTemp1) mainWindow.add(holdTemp1);
   if (holdTemp2) mainWindow.add(holdTemp2);
 };
 
 var refreshData = function() {
-  ecobeeApi.loadThermostat(null, 
-      function(thermostat) {
-        myTstat = thermostat;
+  ecobeeApi.loadThermostats( 
+      function(thermostatList) {
+        myThermostatList = thermostatList;
+        var selectedThermostatId = Settings.data('selectedThermostatId');
+        if(selectedThermostatId){
+          myTstat = Utils.selectThermostat(selectedThermostatId,thermostatList);
+        }
+        else{
+          myTstat = thermostatList[0];
+        }
         mainWindow.setTstatName(myTstat.name);
         mainWindow.setTemperature(myTstat);
         mainWindow.setHumidity(myTstat.runtime.actualHumidity);
@@ -211,10 +216,6 @@ var refreshData = function() {
         ErrorWindow.show('Cannot load thermostat data');
       });
 };
-
-mainWindow.on('click', 'select', function(event) {
-  refreshData();
-});
 
 var changeTemperature = function(delta) {
   var hvacMode = myTstat.settings.hvacMode;
@@ -280,31 +281,21 @@ mainWindow.on('click', 'down', function(event) {
 });
 
 mainWindow.on('click', 'select', function(event) {
-  Menu.show(myTstat);
+  Menu.show(myThermostatList);
 });
 
 mainWindow.on('show', function(event) {
   console.log('Show event on main winow');
-  ecobeeApi.loadThermostat(null, 
-      function(thermostat) {
-            myTstat = thermostat;
-            mainWindow.setTstatName(myTstat.name);
-            mainWindow.setTemperature(myTstat);
-            mainWindow.setHumidity(myTstat.runtime.actualHumidity);
-            mainWindow.setHeatMode(myTstat);
-            mainWindow.displayHold(myTstat);
-            Accel.init();
-            mainWindow.on('accelTap', function(e) {
-              refreshData();
-            });
-      }, 
-      function(error) {
-            ErrorWindow.show('Cannot load thermostat data');
-      });
+  refreshData();
+  
+  mainWindow.on('accelTap', function(e) {
+    refreshData();
+  });
 });
 
 mainWindow.on('hide', function(event) {
   console.log('Hiding main window');
+  mainWindow.off('accelTap');
 });
 
 this.exports = {
