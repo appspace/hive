@@ -26,10 +26,6 @@ How to use the app:
  6. Click "Down" button to lower temperature. 
  7. Click "Right middle" button to get to a menu.
 
-Currently following functionality is being in development: 
-
- - Support for multiple thermostats
-
 
 ----------
 Support the development, [donate if you like the app!](https://www.paypal.me/appspace)
