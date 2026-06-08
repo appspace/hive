@@ -1,0 +1,56 @@
+{
+  "name": "hive",
+  "author": "Eugene Sukharev",
+  "version": "2.0.0",
+  "keywords": [
+    "Hive",
+    "Ecobee"
+  ],
+  "private": true,
+  "scripts": {
+    "prebuild": "node scripts/generate-config.js",
+    "build": "pebble build",
+    "prestart": "npm run build",
+    "start": "pebble install --emulator emery --logs build/hive.pbw",
+    "emery": "npm start",
+    "gabbro": "pebble build && pebble install --emulator gabbro --logs build/hive.pbw",
+    "format": "prettier --write ."
+  },
+  "pebble": {
+    "displayName": "Hive",
+    "uuid": "4e475ece-7659-4ecf-9cc7-57964455b0ba",
+    "projectType": "moddable",
+    "sdkVersion": "3",
+    "enableMultiJS": true,
+    "targetPlatforms": [
+      "emery",
+      "gabbro"
+    ],
+    "watchapp": {
+      "watchface": false
+    },
+    "messageKeys": [
+      "COMMAND",
+      "REQUEST_ID",
+      "DELTA",
+      "ACTION",
+      "INDEX",
+      "VALUE",
+      "STATE",
+      "ERROR"
+    ],
+    "resources": {
+      "media": [
+        {
+          "file": "images/app_logo.png",
+          "menuIcon": true,
+          "name": "IMAGES_APP_LOGO_PNG",
+          "type": "bitmap"
+        }
+      ]
+    }
+  },
+  "devDependencies": {
+    "prettier": "^3.8.3"
+  }
+}

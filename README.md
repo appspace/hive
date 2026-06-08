@@ -1,31 +1,90 @@
 # Hive
 
+Hive is a Pebble app for controlling an [ecobee](https://www.ecobee.com)
+thermostat from a Pebble smartwatch.
 
-----------
+Hive lets you:
 
-Hive is an application to control your [ecobee](www.ecobee.com) thermostat from [pebble](www.pebble.com) smartwatch!
+- Control thermostat temperature settings.
+- See thermostat and sensor values.
+- Change thermostat modes.
+- Set Home, Away, and Sleep holds.
+- Resume the thermostat program.
 
-The application has been [released](https://apps.getpebble.com/en_US/application/56c3897cf3dab7ddce00001c) in February 2016. 
-Application allows you to control temperature settings, see thermostat sensor values as well as change your thermostat between "Home" and "Away" modes.
+## Supported Watches
 
-Supported smartwatches:
+This version targets Pebble hardware supported by the [Alloy SDK](https://developer.repebble.com/guides/alloy/):
 
- - [Pebble Classic](https://www.pebble.com/buy-pebble-smartwatch)
- - [Pebble Steel](https://www.pebble.com/buy-pebble-steel-smartwatch)
- - [Pebble Time](https://www.pebble.com/buy-pebble-time-smartwatch)
- - [Pebble Time Steel](https://www.pebble.com/buy-pebble-time-steel-smartwatch)
- - [Pebble Time Round](https://www.pebble.com/buy-pebble-time-round-smartwatch)
+- Emery, Pebble Time 2
+- Gabbro, Pebble Time 2 Round
 
-How to use the app: 
+## How To Use
 
- 1. Get the application from [Pebble App Market](https://apps.getpebble.com/en_US/application/56c3897cf3dab7ddce00001c)
- 2. At the first run, the application display a 4-character code to link your smartwatch to your ecobee account. Write down the code, go to [ecobee.com](ecobee.com) website. Log into your ecobee account and navigate to "My Apps" section. Click "Add Application" button and enter the code. Click "Validate" and then "Add App".
- 3. Get back to your smartwatches and click right middle button. Pebble will check if linking has been successful. 
- 4. Main screen shows identical screen to your ecobee thermostat. 
- 5. Click "Up" button to increase temperature. 
- 6. Click "Down" button to lower temperature. 
- 7. Click "Right middle" button to get to a menu.
+1. Install Hive on your Pebble from the [Pebble App Market](https://apps.repebble.com/hive-for-ecobee_56c3897cf3dab7ddce00001c).
+2. On first run, Hive displays a short PIN to link your Pebble to your ecobee account.
+3. Go to [ecobee.com](https://www.ecobee.com), log into your ecobee account, and open the **My Apps** section in the menu.
+4. Choose **Add Application**, enter the PIN, click "Validate" and then "Add App".
+5. Return to your Pebble and press the middle/select button.
+6. The main screen shows your thermostat state.
+7. Press **Up** to increase the set temperature.
+8. Press **Down** to lower the set temperature.
+9. Press **Select** to open the menu.
 
 
-----------
-Support the development, [donate if you like the app!](https://www.paypal.me/appspace)
+## Building And Running
+
+Install dependencies with `npm install`
+
+Create a local `.env` file with your ecobee app client ID:
+
+```text
+ECOBEE_CLIENT_ID=your_ecobee_client_id_here
+```
+
+`npm run build` generates `src/pkjs/generated-config.js` from that value. Both
+`.env` and the generated config file are ignored by Git.
+
+
+`npm start` builds and installs `build/hive.pbw` into the Emery emulator with logs enabled.
+
+To install on a paired phone:
+
+```sh
+pebble install --phone <ip> build/hive.pbw
+```
+
+Use `npm run build`, not plain `pebble build`, so the local ecobee client ID is
+generated before PebbleKit JS is bundled.
+
+## Project Layout
+
+```text
+resources/images/app_logo.png   App menu icon
+scripts/generate-config.js      Generates local PKJS config from .env
+src/c/mdbl.c                    C glue around the Moddable runtime
+src/embeddedjs/main.js          Watch UI, buttons, and AppMessage handling
+src/embeddedjs/manifest.json    Moddable manifest
+src/pkjs/constants.js           Shared PKJS constants
+src/pkjs/controller.js          Phone-side command controller
+src/pkjs/ecobee-api.js          ecobee thermostat API calls
+src/pkjs/generated-config.js    Generated from .env, ignored by Git
+src/pkjs/http.js                Promise wrapper around XMLHttpRequest
+src/pkjs/index.js               PebbleKit JS entry point
+src/pkjs/oauth.js               ecobee PIN OAuth and token refresh
+src/pkjs/settings.js            PKJS localStorage persistence
+src/pkjs/thermostat.js          Thermostat formatting and request builders
+src/pkjs/watch-state.js         AppMessage helpers for watch state updates
+.env.example                    Example local ecobee client ID config
+wscript                         Pebble/Alloy build rules
+```
+
+## Notes
+
+- Build artifacts are written to `build/`; the PBW is `build/hive.pbw`.
+- PebbleKit JS uses `XMLHttpRequest` for ecobee API calls because that is the
+  documented PKJS networking API.
+- Watch code handles display/input only; API calls and OAuth run in PKJS.
+
+## Documentation
+
+Full SDK docs and tutorials: <https://developer.repebble.com>
