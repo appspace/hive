@@ -59,8 +59,8 @@ static void draw_desired_pill(GContext *ctx, GRect bounds, int y) {
   GColor mode_color = dashboard_mode_color();
   GColor pill_color = strcmp(s_dashboard.mode_color, "auto") == 0 ? hive_white() : mode_color;
   int width = bounds.size.w - 20;
-  if (width > 170) {
-    width = 170;
+  if (width > 90) {
+    width = 90;
   }
   GRect rect = GRect(bounds.origin.x + (bounds.size.w - width) / 2, y, width, 34);
 
@@ -85,7 +85,7 @@ static void draw_desired_pill(GContext *ctx, GRect bounds, int y) {
 }
 
 static int text_width(const char *text, GFont font, int height) {
-  return graphics_text_layout_get_content_size(text, font, GRect(0, 0, 120, height),
+  return graphics_text_layout_get_content_size(text, font, GRect(0, 0, 200, height),
                                                GTextOverflowModeTrailingEllipsis,
                                                GTextAlignmentLeft)
     .w;
@@ -94,14 +94,23 @@ static int text_width(const char *text, GFont font, int height) {
 static void draw_temperature(GContext *ctx, GRect bounds, int y) {
   const char *value = s_dashboard.temperature[0] ? s_dashboard.temperature : "--";
   char whole[TEXT_SHORT];
-  char decimal[2] = "";
   char fraction[TEXT_SHORT] = "";
   char *point = strchr(value, '.');
   GFont temp_font = fonts_get_system_font(FONT_KEY_ROBOTO_BOLD_SUBSET_49);
-  GFont decimal_font = fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD);
+  int temp_height = 54;
+  int decimal_width = 8;
 
   if (!point) {
-    draw_text(ctx, value, temp_font, GRect(0, y, bounds.size.w, 54), GTextAlignmentCenter,
+    GFont display_font = strcmp(value, "--") == 0 ? fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD)
+                                                  : temp_font;
+    draw_text(ctx, value, display_font, GRect(0, y, bounds.size.w, temp_height),
+              GTextAlignmentCenter, hive_white());
+    return;
+  }
+
+  if (strcmp(value, "--") == 0) {
+    draw_text(ctx, value, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD),
+              GRect(0, y, bounds.size.w, temp_height), GTextAlignmentCenter,
               hive_white());
     return;
   }
@@ -112,20 +121,22 @@ static void draw_temperature(GContext *ctx, GRect bounds, int y) {
   }
   memcpy(whole, value, whole_len);
   whole[whole_len] = '\0';
-  decimal[0] = '.';
   copy_text(fraction, sizeof(fraction), point + 1);
 
-  int whole_width = text_width(whole, temp_font, 54);
-  int decimal_width = text_width(decimal, decimal_font, 34);
-  int fraction_width = text_width(fraction, temp_font, 54);
+  int whole_width = text_width(whole, temp_font, temp_height);
+  int fraction_width = text_width(fraction, temp_font, temp_height);
   int x = (bounds.size.w - whole_width - decimal_width - fraction_width) / 2;
+  int dot_size = 5;
+  int dot_x = x + whole_width + (decimal_width - dot_size) / 2;
+  int dot_y = y + 44;
 
-  draw_text(ctx, whole, temp_font, GRect(x, y, whole_width + 2, 54), GTextAlignmentLeft,
-            hive_white());
-  draw_text(ctx, decimal, decimal_font, GRect(x + whole_width, y + 15, decimal_width + 2, 34),
+  draw_text(ctx, whole, temp_font, GRect(x, y, whole_width + 2, temp_height),
             GTextAlignmentLeft, hive_white());
+  // Roboto's large numeric subset does not include punctuation, so draw the decimal manually.
+  graphics_context_set_fill_color(ctx, hive_white());
+  graphics_fill_circle(ctx, GPoint(dot_x + dot_size / 2, dot_y + dot_size / 2), dot_size / 2);
   draw_text(ctx, fraction, temp_font,
-            GRect(x + whole_width + decimal_width, y, fraction_width + 2, 54),
+            GRect(x + whole_width + decimal_width, y, fraction_width + 2, temp_height),
             GTextAlignmentLeft, hive_white());
 }
 
@@ -139,9 +150,11 @@ static void draw_dashboard(GContext *ctx, GRect bounds) {
             round ? GTextAlignmentCenter : GTextAlignmentLeft, hive_white());
 
   int center_y = bounds.size.h / 2 - 10;
+  int pill_offset =
+    PBL_PLATFORM_SWITCH(PBL_PLATFORM_TYPE_CURRENT, 38, 38, 38, 38, 38, 32, 38);
   draw_humidity(ctx, bounds, center_y - 46);
   draw_temperature(ctx, bounds, center_y - 30);
-  draw_desired_pill(ctx, bounds, center_y + 32);
+  draw_desired_pill(ctx, bounds, center_y + pill_offset);
 
   if (s_dashboard.status[0]) {
     draw_text(ctx, s_dashboard.status, fonts_get_system_font(FONT_KEY_GOTHIC_18),

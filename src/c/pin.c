@@ -19,10 +19,12 @@ void draw_pin_screen(GContext *ctx, GRect bounds) {
   int body_y =
     PBL_PLATFORM_SWITCH(PBL_PLATFORM_TYPE_CURRENT, 96, 96, 96, 96, 96, 46, 96);
   int body_height = bounds.size.h - body_y - 8;
+  GFont body_font = fonts_get_system_font(PBL_PLATFORM_SWITCH(
+    PBL_PLATFORM_TYPE_CURRENT, FONT_KEY_GOTHIC_18, FONT_KEY_GOTHIC_18, FONT_KEY_GOTHIC_18,
+    FONT_KEY_GOTHIC_18, FONT_KEY_GOTHIC_24, FONT_KEY_GOTHIC_18, FONT_KEY_GOTHIC_24));
 
   draw_text(ctx, s_pin, pin_font, GRect(0, pin_y, bounds.size.w, pin_height),
             GTextAlignmentCenter, hive_cool());
-  draw_text(ctx, s_body, fonts_get_system_font(FONT_KEY_GOTHIC_18),
-            GRect(8, body_y, bounds.size.w - 16, body_height), GTextAlignmentCenter,
-            hive_white());
+  draw_text(ctx, s_body, body_font, GRect(8, body_y, bounds.size.w - 16, body_height),
+            GTextAlignmentCenter, hive_white());
 }

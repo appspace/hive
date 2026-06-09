@@ -63,7 +63,6 @@ GColor hive_black(void);
 GColor hive_white(void);
 GColor hive_panel(void);
 GColor hive_menu_bg(void);
-GColor hive_highlight(void);
 GColor hive_heat(void);
 GColor hive_cool(void);
 

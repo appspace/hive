@@ -19,14 +19,6 @@ GColor hive_menu_bg(void) {
 #endif
 }
 
-GColor hive_highlight(void) {
-#ifdef PBL_COLOR
-  return GColorFromHEX(0xaaff00);
-#else
-  return GColorWhite;
-#endif
-}
-
 GColor hive_heat(void) {
 #ifdef PBL_COLOR
   return GColorFromHEX(0xff5500);

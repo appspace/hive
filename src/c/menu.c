@@ -25,13 +25,13 @@ void build_main_menu(void) {
   add_menu_item("Home and Hold", NULL, "HOME");
   add_menu_item("Away and Hold", NULL, "AWAY");
   add_menu_item("Sleep and Hold", NULL, "SLEEP");
+  add_menu_item("Change Mode", NULL, "MODES");
   if (s_dashboard.has_sensors) {
     add_menu_item("Sensors", NULL, "SENSORS");
   }
   if (s_dashboard.thermostat_count > 1) {
     add_menu_item("Thermostats", NULL, "THERMOSTATS");
   }
-  add_menu_item("Change Mode", NULL, "MODES");
 }
 
 static uint16_t menu_get_num_sections_callback(MenuLayer *menu_layer, void *context) {
@@ -82,7 +82,7 @@ static void draw_centered_menu_row(GContext *ctx, const Layer *cell_layer, HiveM
   GRect bounds = layer_get_bounds(cell_layer);
   bool highlighted = menu_cell_layer_is_highlighted(cell_layer);
   GColor bg_color = highlighted ? hive_black() : hive_menu_bg();
-  GColor text_color = highlighted ? hive_highlight() : hive_white();
+  GColor text_color = hive_white();
 
   graphics_context_set_fill_color(ctx, bg_color);
   graphics_fill_rect(ctx, bounds, 0, GCornerNone);
@@ -112,7 +112,7 @@ static void draw_flint_menu_row(GContext *ctx, const Layer *cell_layer, HiveMenu
   GRect bounds = layer_get_bounds(cell_layer);
   bool highlighted = menu_cell_layer_is_highlighted(cell_layer);
   GColor bg_color = highlighted ? hive_black() : hive_menu_bg();
-  GColor text_color = highlighted ? hive_highlight() : hive_white();
+  GColor text_color = hive_white();
 
   graphics_context_set_fill_color(ctx, bg_color);
   graphics_fill_rect(ctx, bounds, 0, GCornerNone);
@@ -221,7 +221,7 @@ static void menu_window_load(Window *window) {
   menu_layer_set_callbacks(s_menu_layer, NULL, s_menu_callbacks);
   window_set_click_config_provider(window, menu_click_config_provider);
   menu_layer_set_normal_colors(s_menu_layer, hive_menu_bg(), hive_white());
-  menu_layer_set_highlight_colors(s_menu_layer, hive_black(), hive_highlight());
+  menu_layer_set_highlight_colors(s_menu_layer, hive_black(), hive_white());
   layer_add_child(window_layer, menu_layer_get_layer(s_menu_layer));
 }
 
