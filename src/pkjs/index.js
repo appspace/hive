@@ -2,7 +2,7 @@ const { handleCommand } = require("./controller");
 const { ensureSettings } = require("./settings");
 const { sendError } = require("./watch-state");
 
-const PKJS_READY_MESSAGE = 15025;
+const READY_KEY = "READY";
 
 Pebble.addEventListener("ready", function () {
   console.log("Hive PKJS ready");
@@ -11,17 +11,12 @@ Pebble.addEventListener("ready", function () {
 });
 
 Pebble.addEventListener("appmessage", function (event) {
-  if (event.payload && event.payload[PKJS_READY_MESSAGE] !== undefined) {
-    notifyWatchReady();
-    return;
-  }
-
   handleCommand(event.payload || {}).catch(sendError);
 });
 
 function notifyWatchReady() {
   var payload = {};
-  payload[PKJS_READY_MESSAGE] = 1;
+  payload[READY_KEY] = 1;
 
   Pebble.sendAppMessage(
     payload,

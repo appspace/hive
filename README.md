@@ -30,7 +30,6 @@ This version targets Pebble hardware supported by the [Alloy SDK](https://develo
 8. Press **Down** to lower the set temperature.
 9. Press **Select** to open the menu.
 
-
 ## Building And Running
 
 Install dependencies with `npm install`
@@ -43,7 +42,6 @@ ECOBEE_CLIENT_ID=your_ecobee_client_id_here
 
 `npm run build` generates `src/pkjs/generated-config.js` from that value. Both
 `.env` and the generated config file are ignored by Git.
-
 
 `npm start` builds and installs `build/hive.pbw` into the Emery emulator with logs enabled.
 

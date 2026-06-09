@@ -13,7 +13,7 @@
     "prestart": "npm run build",
     "start": "pebble install --emulator emery --logs build/hive.pbw",
     "emery": "npm start",
-    "gabbro": "pebble build && pebble install --emulator gabbro --logs build/hive.pbw",
+    "gabbro": "npm run build && pebble install --emulator gabbro --logs build/hive.pbw",
     "format": "prettier --write ."
   },
   "pebble": {
@@ -36,6 +36,7 @@
       "ACTION",
       "INDEX",
       "VALUE",
+      "READY",
       "STATE",
       "ERROR"
     ],

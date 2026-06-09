@@ -31,6 +31,7 @@ const keys = [
   "ACTION",
   "INDEX",
   "VALUE",
+  "READY",
   "STATE",
   "ERROR",
 ];
@@ -39,6 +40,7 @@ let state = { screen: "loading", status: "Connecting..." };
 let selected = 0;
 let busy = false;
 let writable = false;
+let phoneReady = false;
 let requestId = 1;
 let initialRequested = false;
 let backButton = null;
@@ -54,6 +56,11 @@ const message = new Message({
       if (typeof value === "string" || typeof value === "number")
         next[String(key)] = value;
     });
+
+    if (next.READY !== undefined) {
+      phoneReady = true;
+      requestInitialState();
+    }
 
     if (typeof next.STATE === "string") {
       try {
@@ -172,14 +179,14 @@ function activateSelection() {
 
 function requestInitialState() {
   if (initialRequested) return;
-  if (writable) {
+  if (writable && phoneReady) {
     if (!sendCommand("INIT")) setTimeout(requestInitialState, 250);
     else initialRequested = true;
   } else setTimeout(requestInitialState, 250);
 }
 
 function sendCommand(command, extras, status) {
-  if (!writable) {
+  if (!writable || !phoneReady) {
     state = { screen: "loading", status: "Connecting..." };
     draw();
     return;

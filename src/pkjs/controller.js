@@ -9,6 +9,7 @@ var patchSettings = settingsModule.patchSettings;
 var settings = settingsModule.settings;
 var sendState = require("./watch-state").sendState;
 var thermostatUtils = require("./thermostat");
+var MAX_SENSOR_ITEMS = 15;
 
 function handleCommand(payload) {
   var command = payload.COMMAND;
@@ -143,12 +144,18 @@ function sendList(action) {
     var thermostat = thermostatUtils.selectedThermostat(list);
 
     if (action === "SENSORS") {
-      sendState({
-        screen: "list",
-        listTitle: "Sensors",
-        listAction: "REFRESH",
-        list: thermostatUtils.sensorItems(thermostat),
-      });
+      var sensors = thermostatUtils
+        .sensorItems(thermostat)
+        .slice(0, MAX_SENSOR_ITEMS);
+      sendState(
+        {
+          screen: "list",
+          listTitle: "Sensors",
+          listAction: "REFRESH",
+          list: sensors,
+        },
+        "Unable to load list"
+      );
     } else if (action === "THERMOSTATS") {
       sendState({
         screen: "list",
