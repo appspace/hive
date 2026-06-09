@@ -59,8 +59,9 @@ static void draw_desired_pill(GContext *ctx, GRect bounds, int y) {
   GColor mode_color = dashboard_mode_color();
   GColor pill_color = strcmp(s_dashboard.mode_color, "auto") == 0 ? hive_white() : mode_color;
   int width = bounds.size.w - 20;
-  if (width > 90) {
-    width = 90;
+  int maxWidth = PBL_PLATFORM_SWITCH(PBL_PLATFORM_TYPE_CURRENT, 70, 70, 70, 70, 70, 110, 70);
+  if (width > maxWidth) {
+    width = maxWidth;
   }
   GRect rect = GRect(bounds.origin.x + (bounds.size.w - width) / 2, y, width, 34);
 
