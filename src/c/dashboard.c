@@ -54,12 +54,17 @@ static void draw_humidity(GContext *ctx, GRect bounds, int y) {
             hive_white());
 }
 
+static int text_width(const char *text, GFont font, int height);
+
 static void draw_desired_pill(GContext *ctx, GRect bounds, int y) {
   GFont font = fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD);
   GColor mode_color = dashboard_mode_color();
   GColor pill_color = strcmp(s_dashboard.mode_color, "auto") == 0 ? hive_white() : mode_color;
   int width = bounds.size.w - 20;
-  int maxWidth = PBL_PLATFORM_SWITCH(PBL_PLATFORM_TYPE_CURRENT, 70, 70, 70, 70, 70, 110, 70);
+  int maxWidth = s_dashboard.hold
+                   ? PBL_PLATFORM_SWITCH(PBL_PLATFORM_TYPE_CURRENT, 150, 150, 150, 150, 150, 110,
+                                         150)
+                   : PBL_PLATFORM_SWITCH(PBL_PLATFORM_TYPE_CURRENT, 70, 70, 70, 70, 70, 110, 70);
   if (width > maxWidth) {
     width = maxWidth;
   }
@@ -71,17 +76,55 @@ static void draw_desired_pill(GContext *ctx, GRect bounds, int y) {
                                       rect.size.h - 2),
                            15);
 
-  char text[TEXT_LONG];
   if (strcmp(s_dashboard.mode_color, "auto") == 0) {
-    snprintf(text, sizeof(text), "%s-%s%s", s_dashboard.heat_hold[0] ? s_dashboard.heat_hold : "--",
-             s_dashboard.cool_hold[0] ? s_dashboard.cool_hold : "--",
-             s_dashboard.hold ? " | Holding" : "");
-    draw_text(ctx, text, font, rect, GTextAlignmentCenter, hive_white());
+    GFont auto_font = fonts_get_system_font(PBL_PLATFORM_SWITCH(
+      PBL_PLATFORM_TYPE_CURRENT, FONT_KEY_GOTHIC_24_BOLD, FONT_KEY_GOTHIC_24_BOLD,
+      FONT_KEY_GOTHIC_24_BOLD, FONT_KEY_GOTHIC_24_BOLD, FONT_KEY_GOTHIC_24_BOLD,
+      FONT_KEY_GOTHIC_18_BOLD, FONT_KEY_GOTHIC_24_BOLD));
+    GRect text_rect = PBL_PLATFORM_SWITCH(
+      PBL_PLATFORM_TYPE_CURRENT, rect, rect, rect, rect, rect,
+      GRect(rect.origin.x, rect.origin.y + 5, rect.size.w, rect.size.h - 5), rect);
+    const char *heat = s_dashboard.heat_hold[0] ? s_dashboard.heat_hold : "--";
+    const char *separator = "-";
+    const char *cool = s_dashboard.cool_hold[0] ? s_dashboard.cool_hold : "--";
+    const char *hold = s_dashboard.hold ? " | Holding" : "";
+    int heat_width = text_width(heat, auto_font, text_rect.size.h);
+    int separator_width = text_width(separator, auto_font, text_rect.size.h);
+    int cool_width = text_width(cool, auto_font, text_rect.size.h);
+    int hold_width = text_width(hold, auto_font, text_rect.size.h);
+    int text_x =
+      text_rect.origin.x + (text_rect.size.w - heat_width - separator_width - cool_width -
+                            hold_width) /
+                             2;
+
+    draw_text(ctx, heat, auto_font, GRect(text_x, text_rect.origin.y, heat_width + 2,
+                                          text_rect.size.h),
+              GTextAlignmentLeft, hive_heat());
+    text_x += heat_width;
+    draw_text(ctx, separator, auto_font,
+              GRect(text_x, text_rect.origin.y, separator_width + 2, text_rect.size.h),
+              GTextAlignmentLeft, hive_white());
+    text_x += separator_width;
+    draw_text(ctx, cool, auto_font, GRect(text_x, text_rect.origin.y, cool_width + 2,
+                                          text_rect.size.h),
+              GTextAlignmentLeft, hive_cool());
+    text_x += cool_width;
+    draw_text(ctx, hold, auto_font, GRect(text_x, text_rect.origin.y, hold_width + 2,
+                                          text_rect.size.h),
+              GTextAlignmentLeft, hive_white());
   } else {
-    snprintf(text, sizeof(text), "%s%s",
-             s_dashboard.desired_temperature[0] ? s_dashboard.desired_temperature : "Off",
-             s_dashboard.hold ? " | Holding" : "");
-    draw_text(ctx, text, font, rect, GTextAlignmentCenter, mode_color);
+    const char *desired =
+      s_dashboard.desired_temperature[0] ? s_dashboard.desired_temperature : "Off";
+    const char *hold = s_dashboard.hold ? " | Holding" : "";
+    int desired_width = text_width(desired, font, rect.size.h);
+    int hold_width = text_width(hold, font, rect.size.h);
+    int text_x = rect.origin.x + (rect.size.w - desired_width - hold_width) / 2;
+
+    draw_text(ctx, desired, font, GRect(text_x, rect.origin.y, desired_width + 2, rect.size.h),
+              GTextAlignmentLeft, mode_color);
+    text_x += desired_width;
+    draw_text(ctx, hold, font, GRect(text_x, rect.origin.y, hold_width + 2, rect.size.h),
+              GTextAlignmentLeft, hive_white());
   }
 }
 
