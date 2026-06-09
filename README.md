@@ -13,9 +13,8 @@ Hive lets you:
 
 ## Supported Watches
 
-This version targets Pebble hardware supported by the [Alloy SDK](https://developer.repebble.com/guides/alloy/):
-
 - Emery, Pebble Time 2
+- Flint, Pebble 2 HR
 - Gabbro, Pebble Time 2 Round
 
 ## How To Use
@@ -57,23 +56,27 @@ generated before PebbleKit JS is bundled.
 ## Project Layout
 
 ```text
-resources/images/app_logo.png   App menu icon
-scripts/generate-config.js      Generates local PKJS config from .env
-src/c/mdbl.c                    C glue around the Moddable runtime
-src/embeddedjs/main.js          Watch UI, buttons, and AppMessage handling
-src/embeddedjs/manifest.json    Moddable manifest
-src/pkjs/constants.js           Shared PKJS constants
-src/pkjs/controller.js          Phone-side command controller
-src/pkjs/ecobee-api.js          ecobee thermostat API calls
-src/pkjs/generated-config.js    Generated from .env, ignored by Git
-src/pkjs/http.js                Promise wrapper around XMLHttpRequest
-src/pkjs/index.js               PebbleKit JS entry point
-src/pkjs/oauth.js               ecobee PIN OAuth and token refresh
-src/pkjs/settings.js            PKJS localStorage persistence
-src/pkjs/thermostat.js          Thermostat formatting and request builders
-src/pkjs/watch-state.js         AppMessage helpers for watch state updates
-.env.example                    Example local ecobee client ID config
-wscript                         Pebble/Alloy build rules
+resources/images/app_logo.png App menu icon
+scripts/generate-config.js    Generates local PKJS config from .env
+src/c/dashboard.c             Native dashboard drawing
+src/c/hive.h                  Shared C types, state, and function declarations
+src/c/main.c                  Native app lifecycle and button handlers
+src/c/menu.c                  Native MenuLayer setup and callbacks
+src/c/messages.c              Native AppMessage send/receive handling
+src/c/state.c                 Shared C app state
+src/c/util.c                  Native drawing colors, tuple helpers, key helpers
+src/pkjs/constants.js         Shared PKJS constants
+src/pkjs/controller.js        Phone-side command controller
+src/pkjs/ecobee-api.js        ecobee thermostat API calls
+src/pkjs/generated-config.js  Generated from .env, ignored by Git
+src/pkjs/http.js              Promise wrapper around XMLHttpRequest
+src/pkjs/index.js             PebbleKit JS entry point
+src/pkjs/oauth.js             ecobee PIN OAuth and token refresh
+src/pkjs/settings.js          PKJS localStorage persistence
+src/pkjs/thermostat.js        Thermostat formatting and request builders
+src/pkjs/watch-state.js       AppMessage helpers for watch state updates
+.env.example                  Example local ecobee client ID config
+wscript                       Pebble native build rules
 ```
 
 ## Notes
