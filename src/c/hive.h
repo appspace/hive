@@ -84,6 +84,7 @@ void request_initial_state(void);
 void app_message_init(void);
 
 void main_layer_update_proc(Layer *layer, GContext *ctx);
+void draw_pin_screen(GContext *ctx, GRect bounds);
 
 void build_main_menu(void);
 void show_menu(void);

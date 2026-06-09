@@ -161,10 +161,7 @@ void main_layer_update_proc(Layer *layer, GContext *ctx) {
   if (s_screen == SCREEN_DASHBOARD) {
     draw_dashboard(ctx, bounds);
   } else if (s_screen == SCREEN_PIN) {
-    draw_text(ctx, s_pin, fonts_get_system_font(FONT_KEY_BITHAM_30_BLACK),
-              GRect(0, 52, bounds.size.w, 38), GTextAlignmentCenter, hive_cool());
-    draw_text(ctx, s_body, fonts_get_system_font(FONT_KEY_GOTHIC_18),
-              GRect(8, 96, bounds.size.w - 16, 64), GTextAlignmentCenter, hive_white());
+    draw_pin_screen(ctx, bounds);
   } else if (s_screen == SCREEN_ERROR) {
     draw_text(ctx, "Error", fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD),
               GRect(0, bounds.size.h / 2 - 38, bounds.size.w, 30), GTextAlignmentCenter,

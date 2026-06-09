@@ -55,11 +55,19 @@ static int16_t menu_get_cell_height_callback(MenuLayer *menu_layer, MenuIndex *c
 
 static int16_t menu_get_header_height_callback(MenuLayer *menu_layer, uint16_t section_index,
                                                void *context) {
+  if (s_menu_kind == MENU_KIND_MAIN) {
+    return 0;
+  }
+
   return 34;
 }
 
 static void menu_draw_header_callback(GContext *ctx, const Layer *cell_layer,
                                       uint16_t section_index, void *context) {
+  if (s_menu_kind == MENU_KIND_MAIN) {
+    return;
+  }
+
   GRect bounds = layer_get_bounds(cell_layer);
   graphics_context_set_fill_color(ctx, hive_black());
   graphics_fill_rect(ctx, bounds, 0, GCornerNone);
@@ -69,6 +77,62 @@ static void menu_draw_header_callback(GContext *ctx, const Layer *cell_layer,
                      PBL_IF_ROUND_ELSE(GTextAlignmentCenter, GTextAlignmentLeft), NULL);
 }
 
+#if defined(PBL_ROUND)
+static void draw_centered_menu_row(GContext *ctx, const Layer *cell_layer, HiveMenuItem *item) {
+  GRect bounds = layer_get_bounds(cell_layer);
+  bool highlighted = menu_cell_layer_is_highlighted(cell_layer);
+  GColor bg_color = highlighted ? hive_black() : hive_menu_bg();
+  GColor text_color = highlighted ? hive_highlight() : hive_white();
+
+  graphics_context_set_fill_color(ctx, bg_color);
+  graphics_fill_rect(ctx, bounds, 0, GCornerNone);
+  graphics_context_set_text_color(ctx, text_color);
+
+  if (item->subtitle[0]) {
+    graphics_draw_text(ctx, item->title, fonts_get_system_font(FONT_KEY_GOTHIC_24),
+                       GRect(8, 1, bounds.size.w - 16, 25), GTextOverflowModeTrailingEllipsis,
+                       GTextAlignmentCenter, NULL);
+    graphics_draw_text(ctx, item->subtitle, fonts_get_system_font(FONT_KEY_GOTHIC_18),
+                       GRect(8, 24, bounds.size.w - 16, 19), GTextOverflowModeTrailingEllipsis,
+                       GTextAlignmentCenter, NULL);
+  } else {
+    graphics_draw_text(ctx, item->title, fonts_get_system_font(FONT_KEY_GOTHIC_28),
+                       GRect(8, 0, bounds.size.w - 16, bounds.size.h),
+                       GTextOverflowModeTrailingEllipsis, GTextAlignmentCenter, NULL);
+  }
+}
+#else
+
+static bool is_flint(void) {
+  return PBL_PLATFORM_SWITCH(PBL_PLATFORM_TYPE_CURRENT, false, false, false, false, false, true,
+                             false);
+}
+
+static void draw_flint_menu_row(GContext *ctx, const Layer *cell_layer, HiveMenuItem *item) {
+  GRect bounds = layer_get_bounds(cell_layer);
+  bool highlighted = menu_cell_layer_is_highlighted(cell_layer);
+  GColor bg_color = highlighted ? hive_black() : hive_menu_bg();
+  GColor text_color = highlighted ? hive_highlight() : hive_white();
+
+  graphics_context_set_fill_color(ctx, bg_color);
+  graphics_fill_rect(ctx, bounds, 0, GCornerNone);
+  graphics_context_set_text_color(ctx, text_color);
+
+  if (item->subtitle[0]) {
+    graphics_draw_text(ctx, item->title, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD),
+                       GRect(6, 2, bounds.size.w - 12, 20), GTextOverflowModeTrailingEllipsis,
+                       GTextAlignmentLeft, NULL);
+    graphics_draw_text(ctx, item->subtitle, fonts_get_system_font(FONT_KEY_GOTHIC_14),
+                       GRect(6, 22, bounds.size.w - 12, 17), GTextOverflowModeTrailingEllipsis,
+                       GTextAlignmentLeft, NULL);
+  } else {
+    graphics_draw_text(ctx, item->title, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD),
+                       GRect(6, 2, bounds.size.w - 12, bounds.size.h - 2),
+                       GTextOverflowModeTrailingEllipsis, GTextAlignmentLeft, NULL);
+  }
+}
+#endif
+
 static void menu_draw_row_callback(GContext *ctx, const Layer *cell_layer, MenuIndex *cell_index,
                                    void *context) {
   if (cell_index->row >= (uint16_t)s_menu_item_count) {
@@ -76,11 +140,17 @@ static void menu_draw_row_callback(GContext *ctx, const Layer *cell_layer, MenuI
   }
 
   HiveMenuItem *item = &s_menu_items[cell_index->row];
-  if (item->subtitle[0]) {
+#if defined(PBL_ROUND)
+  draw_centered_menu_row(ctx, cell_layer, item);
+#else
+  if (is_flint()) {
+    draw_flint_menu_row(ctx, cell_layer, item);
+  } else if (item->subtitle[0]) {
     menu_cell_basic_draw(ctx, cell_layer, item->title, item->subtitle, NULL);
   } else {
     menu_cell_title_draw(ctx, cell_layer, item->title);
   }
+#endif
 }
 
 static void menu_select_callback(MenuLayer *menu_layer, MenuIndex *cell_index, void *context) {

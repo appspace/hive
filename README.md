@@ -59,6 +59,7 @@ generated before PebbleKit JS is bundled.
 resources/images/app_logo.png App menu icon
 scripts/generate-config.js    Generates local PKJS config from .env
 src/c/dashboard.c             Native dashboard drawing
+src/c/pin.c                   Native pin screen drawing
 src/c/hive.h                  Shared C types, state, and function declarations
 src/c/main.c                  Native app lifecycle and button handlers
 src/c/menu.c                  Native MenuLayer setup and callbacks
@@ -82,8 +83,6 @@ wscript                       Pebble native build rules
 ## Notes
 
 - Build artifacts are written to `build/`; the PBW is `build/hive.pbw`.
-- PebbleKit JS uses `XMLHttpRequest` for ecobee API calls because that is the
-  documented PKJS networking API.
 - Watch code handles display/input only; API calls and OAuth run in PKJS.
 
 ## Documentation
