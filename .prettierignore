@@ -1,0 +1,8 @@
+build/
+node_modules/
+
+src/pkjs/generated-config.js
+
+.env
+.env.*
+.lock-waf_linux_build
