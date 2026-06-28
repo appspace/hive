@@ -78,9 +78,44 @@ function getAccessToken() {
     "&refresh_token=" +
     encodeURIComponent(data.refreshToken);
 
-  return requestJson(tokenUrl, { method: "POST" }).then(function (response) {
-    saveToken(response);
-    return response.access_token;
+  return refreshAccessToken(tokenUrl, 3);
+}
+
+function refreshAccessToken(tokenUrl, retriesRemaining) {
+  return requestJson(tokenUrl, { method: "POST" })
+    .then(function (response) {
+      if (!response.access_token) {
+        throw new Error("Access token refresh did not return an access token");
+      }
+      saveToken(response);
+      return response.access_token;
+    })
+    .catch(function (error) {
+      if (retriesRemaining > 0) {
+        console.log(
+          "access token refresh failed, retrying: " +
+            (error && error.message ? error.message : JSON.stringify(error))
+        );
+        return delay(1000).then(function () {
+          return refreshAccessToken(tokenUrl, retriesRemaining - 1);
+        });
+      }
+
+      patchSettings({
+        paired: false,
+        refreshToken: null,
+        oauthToken: null,
+        oauthTokenExpires: null,
+      });
+      error = error || new Error("Access token refresh failed");
+      error.needsPairing = true;
+      throw error;
+    });
+}
+
+function delay(ms) {
+  return new Promise(function (resolve) {
+    setTimeout(resolve, ms);
   });
 }
 

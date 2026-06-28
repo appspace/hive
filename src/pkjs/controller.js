@@ -202,6 +202,9 @@ function postAndRefresh(body, list) {
     .then(bootstrap)
     .catch(function (error) {
       logHttpErrorBody(error);
+      if (error.needsPairing) {
+        return showPin();
+      }
       sendDashboard(list, "Update failed");
     });
 }
