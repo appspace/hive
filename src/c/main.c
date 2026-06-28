@@ -73,6 +73,8 @@ static void init(void) {
 }
 
 static void deinit(void) {
+  light_enable(false);
+  light_enable_interaction();
   if (s_current_temperature_font) {
     fonts_unload_custom_font(s_current_temperature_font);
     s_current_temperature_font = NULL;

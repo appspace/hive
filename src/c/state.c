@@ -5,6 +5,7 @@ Window *s_menu_window;
 MenuLayer *s_menu_layer;
 bool s_menu_visible;
 GFont s_current_temperature_font;
+static bool s_pin_backlight_enabled;
 
 AppScreen s_screen = SCREEN_LOADING;
 DashboardState s_dashboard;
@@ -26,6 +27,15 @@ int32_t s_pending_request_id;
 int32_t s_latest_response_request_id;
 
 void set_screen(AppScreen screen) {
+  bool should_enable_pin_backlight = screen == SCREEN_PIN;
+  if (should_enable_pin_backlight != s_pin_backlight_enabled) {
+    light_enable(should_enable_pin_backlight);
+    if (!should_enable_pin_backlight) {
+      light_enable_interaction();
+    }
+    s_pin_backlight_enabled = should_enable_pin_backlight;
+  }
+
   s_screen = screen;
   if (s_main_layer) {
     layer_mark_dirty(s_main_layer);
