@@ -3,6 +3,7 @@ function requestJson(url, options) {
   return new Promise(function (resolve, reject) {
     var xhr = new XMLHttpRequest();
     xhr.open(options.method || "GET", url, true);
+    xhr.timeout = options.timeout || 30000;
 
     var headers = options.headers || {};
     Object.keys(headers).forEach(function (key) {
@@ -16,6 +17,9 @@ function requestJson(url, options) {
     };
     xhr.onerror = function () {
       reject(new Error("Network error"));
+    };
+    xhr.ontimeout = function () {
+      reject(new Error("Request timed out"));
     };
     xhr.send(options.body || null);
   });
