@@ -169,7 +169,7 @@ static void draw_dashboard(GContext *ctx, GRect bounds) {
 
   int center_y = bounds.size.h / 2 - 10;
 #ifdef PBL_PLATFORM_FLINT
-  int pill_offset = 32;
+  int pill_offset = 38;
 #else
   int pill_offset = 56;
 #endif
