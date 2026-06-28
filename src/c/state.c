@@ -22,6 +22,8 @@ char s_error[TEXT_LONG];
 bool s_phone_ready;
 bool s_busy;
 int32_t s_request_id = 1;
+int32_t s_pending_request_id;
+int32_t s_latest_response_request_id;
 
 void set_screen(AppScreen screen) {
   s_screen = screen;

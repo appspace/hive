@@ -59,6 +59,8 @@ extern char s_error[TEXT_LONG];
 extern bool s_phone_ready;
 extern bool s_busy;
 extern int32_t s_request_id;
+extern int32_t s_pending_request_id;
+extern int32_t s_latest_response_request_id;
 
 GColor hive_black(void);
 GColor hive_white(void);

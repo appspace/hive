@@ -1,21 +1,22 @@
 var MAX_LIST_ITEMS = 20;
 
-function sendState(state, fallbackError) {
+function sendState(state, fallbackError, requestId) {
   Pebble.sendAppMessage(
-    statePayload(state),
+    statePayload(state, requestId),
     function () {},
     function (error) {
       console.log("send state failed: " + JSON.stringify(error));
-      sendError(fallbackError || "Unable to update watch");
+      sendError(fallbackError || "Unable to update watch", requestId);
     }
   );
 }
 
-function statePayload(state) {
+function statePayload(state, requestId) {
   var payload = {
     SCREEN: state.screen || "loading",
   };
 
+  addNumber(payload, "REQUEST_ID", requestId);
   addString(payload, "TITLE", state.title);
   addString(payload, "BODY", state.body);
 
@@ -68,7 +69,11 @@ function addString(payload, key, value) {
   if (value !== undefined && value !== null) payload[key] = String(value);
 }
 
-function sendError(error) {
+function addNumber(payload, key, value) {
+  if (value !== undefined && value !== null) payload[key] = Number(value);
+}
+
+function sendError(error, requestId) {
   const message =
     error && error.message
       ? error.message
@@ -76,8 +81,10 @@ function sendError(error) {
         ? error
         : JSON.stringify(error);
   console.log("error: " + message);
+  var payload = { ERROR: message || "Unknown error" };
+  addNumber(payload, "REQUEST_ID", requestId);
   Pebble.sendAppMessage(
-    { ERROR: message || "Unknown error" },
+    payload,
     function () {},
     function (error) {
       console.log("send error failed: " + JSON.stringify(error));

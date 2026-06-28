@@ -13,8 +13,9 @@ bool send_command(const char *command, const char *action, const char *value, in
     return false;
   }
 
+  int32_t request_id = s_request_id++;
   dict_write_cstring(iter, MESSAGE_KEY_COMMAND, command);
-  dict_write_int32(iter, MESSAGE_KEY_REQUEST_ID, s_request_id++);
+  dict_write_int32(iter, MESSAGE_KEY_REQUEST_ID, request_id);
   if (include_delta) {
     dict_write_int32(iter, MESSAGE_KEY_DELTA, delta);
   }
@@ -35,6 +36,7 @@ bool send_command(const char *command, const char *action, const char *value, in
     return false;
   }
 
+  s_pending_request_id = request_id;
   s_busy = true;
   return true;
 }
@@ -88,11 +90,27 @@ static void parse_list(DictionaryIterator *iter) {
 }
 
 static void inbox_received_callback(DictionaryIterator *iter, void *context) {
-  s_busy = false;
-
   if (dict_find(iter, MESSAGE_KEY_READY)) {
     s_phone_ready = true;
     request_initial_state();
+    return;
+  }
+
+  Tuple *request_tuple = dict_find(iter, MESSAGE_KEY_REQUEST_ID);
+  if (request_tuple && request_tuple->type == TUPLE_INT) {
+    int32_t response_request_id = request_tuple->value->int32;
+    if ((s_pending_request_id && response_request_id != s_pending_request_id) ||
+        response_request_id < s_latest_response_request_id) {
+      APP_LOG(APP_LOG_LEVEL_INFO, "ignoring stale response: %ld", (long)response_request_id);
+      return;
+    }
+    s_latest_response_request_id = response_request_id;
+    if (response_request_id == s_pending_request_id) {
+      s_pending_request_id = 0;
+      s_busy = false;
+    }
+  } else {
+    s_busy = false;
   }
 
   Tuple *error_tuple = dict_find(iter, MESSAGE_KEY_ERROR);
@@ -129,12 +147,14 @@ static void inbox_received_callback(DictionaryIterator *iter, void *context) {
 
 static void inbox_dropped_callback(AppMessageResult reason, void *context) {
   s_busy = false;
+  s_pending_request_id = 0;
   APP_LOG(APP_LOG_LEVEL_WARNING, "inbox dropped: %d", reason);
   set_error("Phone response too large");
 }
 
 static void outbox_failed_callback(DictionaryIterator *iter, AppMessageResult reason, void *context) {
   s_busy = false;
+  s_pending_request_id = 0;
   APP_LOG(APP_LOG_LEVEL_WARNING, "outbox failed: %d", reason);
   set_error("Update failed");
 }
