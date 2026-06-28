@@ -101,12 +101,7 @@ static void draw_centered_menu_row(GContext *ctx, const Layer *cell_layer, HiveM
                        GTextOverflowModeTrailingEllipsis, GTextAlignmentCenter, NULL);
   }
 }
-#else
-
-static bool is_flint(void) {
-  return PBL_PLATFORM_SWITCH(PBL_PLATFORM_TYPE_CURRENT, false, false, false, false, false, true,
-                             false);
-}
+#elif defined(PBL_PLATFORM_FLINT)
 
 static void draw_flint_menu_row(GContext *ctx, const Layer *cell_layer, HiveMenuItem *item) {
   GRect bounds = layer_get_bounds(cell_layer);
@@ -142,10 +137,10 @@ static void menu_draw_row_callback(GContext *ctx, const Layer *cell_layer, MenuI
   HiveMenuItem *item = &s_menu_items[cell_index->row];
 #if defined(PBL_ROUND)
   draw_centered_menu_row(ctx, cell_layer, item);
+#elif defined(PBL_PLATFORM_FLINT)
+  draw_flint_menu_row(ctx, cell_layer, item);
 #else
-  if (is_flint()) {
-    draw_flint_menu_row(ctx, cell_layer, item);
-  } else if (item->subtitle[0]) {
+  if (item->subtitle[0]) {
     menu_cell_basic_draw(ctx, cell_layer, item->title, item->subtitle, NULL);
   } else {
     menu_cell_title_draw(ctx, cell_layer, item->title);

@@ -37,6 +37,7 @@ function bootstrap() {
     })
     .catch(function (error) {
       if (error.needsPairing) return showPin();
+      logHttpErrorBody(error);
       throw error;
     });
 }
@@ -200,10 +201,7 @@ function postAndRefresh(body, list) {
   return postThermostat(body)
     .then(bootstrap)
     .catch(function (error) {
-      console.log(
-        "update failed: " +
-          (error && error.message ? error.message : JSON.stringify(error))
-      );
+      logHttpErrorBody(error);
       sendDashboard(list, "Update failed");
     });
 }
@@ -218,6 +216,11 @@ function sendDashboard(list, status) {
       status
     ),
   });
+}
+
+function logHttpErrorBody(error) {
+  if (!error || !error.responseText) return;
+  console.log("http error body: " + error.responseText);
 }
 
 function pinInstructions() {

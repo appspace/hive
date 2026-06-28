@@ -4,6 +4,7 @@ Layer *s_main_layer;
 Window *s_menu_window;
 MenuLayer *s_menu_layer;
 bool s_menu_visible;
+GFont s_current_temperature_font;
 
 AppScreen s_screen = SCREEN_LOADING;
 DashboardState s_dashboard;

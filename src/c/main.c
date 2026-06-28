@@ -51,6 +51,13 @@ static void init(void) {
   copy_text(s_dashboard.name, sizeof(s_dashboard.name), "Hive");
   copy_text(s_title, sizeof(s_title), "Hive");
   copy_text(s_body, sizeof(s_body), "Connecting...");
+#ifdef PBL_PLATFORM_FLINT
+  s_current_temperature_font =
+    fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ROBOTO_MONO_BOLD_54));
+#else
+  s_current_temperature_font =
+    fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_ROBOTO_MONO_BOLD_64));
+#endif
 
   s_main_window = window_create();
   window_set_background_color(s_main_window, hive_black());
@@ -66,6 +73,10 @@ static void init(void) {
 }
 
 static void deinit(void) {
+  if (s_current_temperature_font) {
+    fonts_unload_custom_font(s_current_temperature_font);
+    s_current_temperature_font = NULL;
+  }
   if (s_menu_window) {
     window_destroy(s_menu_window);
   }

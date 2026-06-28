@@ -12,7 +12,7 @@ function requestJson(url, options) {
     xhr.onload = function () {
       var payload = parseJson(xhr.responseText);
       if (xhr.status >= 200 && xhr.status < 300) resolve(payload);
-      else reject(requestError(payload, xhr.status));
+      else reject(requestError(payload, xhr.status, xhr.responseText));
     };
     xhr.onerror = function () {
       reject(new Error("Network error"));
@@ -30,12 +30,13 @@ function parseJson(text) {
   }
 }
 
-function requestError(payload, status) {
+function requestError(payload, status, responseText) {
   var message =
     payload.error_description || payload.message || "HTTP " + status;
   var error = new Error(message);
   error.status = status;
   error.payload = payload;
+  error.responseText = responseText || "";
   return error;
 }
 

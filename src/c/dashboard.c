@@ -61,10 +61,11 @@ static void draw_desired_pill(GContext *ctx, GRect bounds, int y) {
   GColor mode_color = dashboard_mode_color();
   GColor pill_color = strcmp(s_dashboard.mode_color, "auto") == 0 ? hive_white() : mode_color;
   int width = bounds.size.w - 20;
-  int maxWidth = s_dashboard.hold
-                   ? PBL_PLATFORM_SWITCH(PBL_PLATFORM_TYPE_CURRENT, 150, 150, 150, 150, 150, 110,
-                                         150)
-                   : PBL_PLATFORM_SWITCH(PBL_PLATFORM_TYPE_CURRENT, 70, 70, 70, 70, 70, 110, 70);
+#ifdef PBL_PLATFORM_FLINT
+  int maxWidth = 110;
+#else
+  int maxWidth = s_dashboard.hold ? 150 : 70;
+#endif
   if (width > maxWidth) {
     width = maxWidth;
   }
@@ -77,13 +78,13 @@ static void draw_desired_pill(GContext *ctx, GRect bounds, int y) {
                            15);
 
   if (strcmp(s_dashboard.mode_color, "auto") == 0) {
-    GFont auto_font = fonts_get_system_font(PBL_PLATFORM_SWITCH(
-      PBL_PLATFORM_TYPE_CURRENT, FONT_KEY_GOTHIC_24_BOLD, FONT_KEY_GOTHIC_24_BOLD,
-      FONT_KEY_GOTHIC_24_BOLD, FONT_KEY_GOTHIC_24_BOLD, FONT_KEY_GOTHIC_24_BOLD,
-      FONT_KEY_GOTHIC_18_BOLD, FONT_KEY_GOTHIC_24_BOLD));
-    GRect text_rect = PBL_PLATFORM_SWITCH(
-      PBL_PLATFORM_TYPE_CURRENT, rect, rect, rect, rect, rect,
-      GRect(rect.origin.x, rect.origin.y + 5, rect.size.w, rect.size.h - 5), rect);
+#ifdef PBL_PLATFORM_FLINT
+    GFont auto_font = fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD);
+    GRect text_rect = GRect(rect.origin.x, rect.origin.y + 5, rect.size.w, rect.size.h - 5);
+#else
+    GFont auto_font = fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD);
+    GRect text_rect = rect;
+#endif
     const char *heat = s_dashboard.heat_hold[0] ? s_dashboard.heat_hold : "--";
     const char *separator = "-";
     const char *cool = s_dashboard.cool_hold[0] ? s_dashboard.cool_hold : "--";
@@ -137,20 +138,14 @@ static int text_width(const char *text, GFont font, int height) {
 
 static void draw_temperature(GContext *ctx, GRect bounds, int y) {
   const char *value = s_dashboard.temperature[0] ? s_dashboard.temperature : "--";
-  char whole[TEXT_SHORT];
-  char fraction[TEXT_SHORT] = "";
-  char *point = strchr(value, '.');
-  GFont temp_font = fonts_get_system_font(FONT_KEY_ROBOTO_BOLD_SUBSET_49);
-  int temp_height = 54;
-  int decimal_width = 8;
-
-  if (!point) {
-    GFont display_font = strcmp(value, "--") == 0 ? fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD)
-                                                  : temp_font;
-    draw_text(ctx, value, display_font, GRect(0, y, bounds.size.w, temp_height),
-              GTextAlignmentCenter, hive_white());
-    return;
-  }
+  GFont temp_font = s_current_temperature_font
+                      ? s_current_temperature_font
+                      : fonts_get_system_font(FONT_KEY_ROBOTO_BOLD_SUBSET_49);
+#ifdef PBL_PLATFORM_FLINT
+  int temp_height = 62;
+#else
+  int temp_height = 72;
+#endif
 
   if (strcmp(value, "--") == 0) {
     draw_text(ctx, value, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD),
@@ -159,29 +154,8 @@ static void draw_temperature(GContext *ctx, GRect bounds, int y) {
     return;
   }
 
-  int whole_len = point - value;
-  if (whole_len >= (int)sizeof(whole)) {
-    whole_len = sizeof(whole) - 1;
-  }
-  memcpy(whole, value, whole_len);
-  whole[whole_len] = '\0';
-  copy_text(fraction, sizeof(fraction), point + 1);
-
-  int whole_width = text_width(whole, temp_font, temp_height);
-  int fraction_width = text_width(fraction, temp_font, temp_height);
-  int x = (bounds.size.w - whole_width - decimal_width - fraction_width) / 2;
-  int dot_size = 5;
-  int dot_x = x + whole_width + (decimal_width - dot_size) / 2;
-  int dot_y = y + 44;
-
-  draw_text(ctx, whole, temp_font, GRect(x, y, whole_width + 2, temp_height),
-            GTextAlignmentLeft, hive_white());
-  // Roboto's large numeric subset does not include punctuation, so draw the decimal manually.
-  graphics_context_set_fill_color(ctx, hive_white());
-  graphics_fill_circle(ctx, GPoint(dot_x + dot_size / 2, dot_y + dot_size / 2), dot_size / 2);
-  draw_text(ctx, fraction, temp_font,
-            GRect(x + whole_width + decimal_width, y, fraction_width + 2, temp_height),
-            GTextAlignmentLeft, hive_white());
+  draw_text(ctx, value, temp_font, GRect(0, y, bounds.size.w, temp_height),
+            GTextAlignmentCenter, hive_white());
 }
 
 static void draw_dashboard(GContext *ctx, GRect bounds) {
@@ -194,8 +168,11 @@ static void draw_dashboard(GContext *ctx, GRect bounds) {
             round ? GTextAlignmentCenter : GTextAlignmentLeft, hive_white());
 
   int center_y = bounds.size.h / 2 - 10;
-  int pill_offset =
-    PBL_PLATFORM_SWITCH(PBL_PLATFORM_TYPE_CURRENT, 38, 38, 38, 38, 38, 32, 38);
+#ifdef PBL_PLATFORM_FLINT
+  int pill_offset = 32;
+#else
+  int pill_offset = 56;
+#endif
   draw_humidity(ctx, bounds, center_y - 46);
   draw_temperature(ctx, bounds, center_y - 30);
   draw_desired_pill(ctx, bounds, center_y + pill_offset);
@@ -219,19 +196,12 @@ void main_layer_update_proc(Layer *layer, GContext *ctx) {
     draw_dashboard(ctx, bounds);
   } else if (s_screen == SCREEN_PIN) {
     draw_pin_screen(ctx, bounds);
-  } else if (s_screen == SCREEN_ERROR) {
-    draw_text(ctx, "Error", fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD),
-              GRect(0, bounds.size.h / 2 - 38, bounds.size.w, 30), GTextAlignmentCenter,
-              hive_white());
-    draw_text(ctx, s_error, fonts_get_system_font(FONT_KEY_GOTHIC_24),
-              GRect(8, bounds.size.h / 2 - 8, bounds.size.w - 16, 58), GTextAlignmentCenter,
-              hive_white());
   } else {
-    draw_text(ctx, s_title, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD),
-              GRect(0, bounds.size.h / 2 - 40, bounds.size.w, 30), GTextAlignmentCenter,
+    draw_text(ctx, s_title, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD),
+              GRect(0, bounds.size.h / 2 - 48, bounds.size.w, 34), GTextAlignmentCenter,
               hive_white());
-    draw_text(ctx, s_body, fonts_get_system_font(FONT_KEY_GOTHIC_24),
-              GRect(8, bounds.size.h / 2 - 8, bounds.size.w - 16, 58), GTextAlignmentCenter,
+    draw_text(ctx, s_body, fonts_get_system_font(FONT_KEY_GOTHIC_28),
+              GRect(0, bounds.size.h / 2 - 10, bounds.size.w, 38), GTextAlignmentCenter,
               hive_white());
   }
 }

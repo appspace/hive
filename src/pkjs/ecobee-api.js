@@ -30,7 +30,7 @@ function loadThermostats() {
         throw new Error("No thermostats linked");
 
       cache = response.thermostatList;
-      cacheExpiration = Date.now() + 30000;
+      cacheExpiration = Date.now() + 600000;
       return cache;
     });
 }

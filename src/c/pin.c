@@ -8,20 +8,20 @@ static void draw_text(GContext *ctx, const char *text, GFont font, GRect rect,
 }
 
 void draw_pin_screen(GContext *ctx, GRect bounds) {
-  GFont pin_font = fonts_get_system_font(PBL_PLATFORM_SWITCH(
-    PBL_PLATFORM_TYPE_CURRENT, FONT_KEY_BITHAM_30_BLACK, FONT_KEY_BITHAM_30_BLACK,
-    FONT_KEY_BITHAM_30_BLACK, FONT_KEY_BITHAM_30_BLACK, FONT_KEY_BITHAM_30_BLACK,
-    FONT_KEY_GOTHIC_28_BOLD, FONT_KEY_BITHAM_30_BLACK));
-  int pin_y =
-    PBL_PLATFORM_SWITCH(PBL_PLATFORM_TYPE_CURRENT, 52, 52, 52, 52, 52, 8, 52);
-  int pin_height =
-    PBL_PLATFORM_SWITCH(PBL_PLATFORM_TYPE_CURRENT, 38, 38, 38, 38, 38, 34, 38);
-  int body_y =
-    PBL_PLATFORM_SWITCH(PBL_PLATFORM_TYPE_CURRENT, 96, 96, 96, 96, 96, 46, 96);
+#ifdef PBL_PLATFORM_FLINT
+  GFont pin_font = fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD);
+  int pin_y = 8;
+  int pin_height = 34;
+  int body_y = 46;
+  GFont body_font = fonts_get_system_font(FONT_KEY_GOTHIC_18);
+#else
+  GFont pin_font = fonts_get_system_font(FONT_KEY_BITHAM_30_BLACK);
+  int pin_y = 52;
+  int pin_height = 38;
+  int body_y = 96;
+  GFont body_font = fonts_get_system_font(FONT_KEY_GOTHIC_24);
+#endif
   int body_height = bounds.size.h - body_y - 8;
-  GFont body_font = fonts_get_system_font(PBL_PLATFORM_SWITCH(
-    PBL_PLATFORM_TYPE_CURRENT, FONT_KEY_GOTHIC_18, FONT_KEY_GOTHIC_18, FONT_KEY_GOTHIC_18,
-    FONT_KEY_GOTHIC_18, FONT_KEY_GOTHIC_24, FONT_KEY_GOTHIC_18, FONT_KEY_GOTHIC_24));
 
   draw_text(ctx, s_pin, pin_font, GRect(0, pin_y, bounds.size.w, pin_height),
             GTextAlignmentCenter, hive_cool());
