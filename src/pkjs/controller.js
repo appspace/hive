@@ -58,8 +58,8 @@ function showPin() {
 
   sendState({
     screen: "loading",
-    title: "Authorization",
-    body: "Calling ecobee for authorization. Please wait.",
+    title: "Authorizing",
+    body: "Please wait...",
   });
   return getPin().then(function (pin) {
     sendState({
