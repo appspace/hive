@@ -1,5 +1,9 @@
 #include "hive.h"
 
+#define INACTIVITY_TIMEOUT_MS (60 * 1000)
+
+static AppTimer *s_inactivity_timer;
+
 Layer *s_main_layer;
 Window *s_menu_window;
 MenuLayer *s_menu_layer;
@@ -45,4 +49,16 @@ void set_screen(AppScreen screen) {
 void set_error(const char *message) {
   copy_text(s_error, sizeof(s_error), message && message[0] ? message : "Unknown error");
   set_screen(SCREEN_ERROR);
+}
+
+static void inactivity_timeout_handler(void *context) {
+  s_inactivity_timer = NULL;
+  window_stack_pop_all(true);
+}
+
+void reset_inactivity_timer(void) {
+  if (s_inactivity_timer && app_timer_reschedule(s_inactivity_timer, INACTIVITY_TIMEOUT_MS)) {
+    return;
+  }
+  s_inactivity_timer = app_timer_register(INACTIVITY_TIMEOUT_MS, inactivity_timeout_handler, NULL);
 }

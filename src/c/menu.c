@@ -169,6 +169,7 @@ static void menu_select_callback(MenuLayer *menu_layer, MenuIndex *cell_index, v
 }
 
 static void menu_back_click_handler(ClickRecognizerRef recognizer, void *context) {
+  reset_inactivity_timer();
   if (s_menu_kind == MENU_KIND_LIST) {
     build_main_menu();
     menu_layer_reload_data(s_menu_layer);
@@ -180,14 +181,17 @@ static void menu_back_click_handler(ClickRecognizerRef recognizer, void *context
 }
 
 static void menu_up_click_handler(ClickRecognizerRef recognizer, void *context) {
+  reset_inactivity_timer();
   menu_layer_set_selected_next(s_menu_layer, true, MenuRowAlignCenter, true);
 }
 
 static void menu_down_click_handler(ClickRecognizerRef recognizer, void *context) {
+  reset_inactivity_timer();
   menu_layer_set_selected_next(s_menu_layer, false, MenuRowAlignCenter, true);
 }
 
 static void menu_select_click_handler(ClickRecognizerRef recognizer, void *context) {
+  reset_inactivity_timer();
   MenuIndex selected = menu_layer_get_selected_index(s_menu_layer);
   menu_select_callback(s_menu_layer, &selected, NULL);
 }

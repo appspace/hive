@@ -3,6 +3,7 @@
 static Window *s_main_window;
 
 static void select_click_handler(ClickRecognizerRef recognizer, void *context) {
+  reset_inactivity_timer();
   if (s_busy) {
     return;
   }
@@ -17,12 +18,14 @@ static void select_click_handler(ClickRecognizerRef recognizer, void *context) {
 }
 
 static void up_click_handler(ClickRecognizerRef recognizer, void *context) {
+  reset_inactivity_timer();
   if (!s_busy && s_screen == SCREEN_DASHBOARD) {
     send_command("ADJUST", NULL, NULL, 10, 0, true, false);
   }
 }
 
 static void down_click_handler(ClickRecognizerRef recognizer, void *context) {
+  reset_inactivity_timer();
   if (!s_busy && s_screen == SCREEN_DASHBOARD) {
     send_command("ADJUST", NULL, NULL, -10, 0, true, false);
   }
@@ -70,6 +73,7 @@ static void init(void) {
   window_stack_push(s_main_window, true);
 
   app_message_init();
+  reset_inactivity_timer();
 }
 
 static void deinit(void) {

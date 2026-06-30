@@ -79,6 +79,7 @@ uint32_t item_value_key(int index);
 
 void set_screen(AppScreen screen);
 void set_error(const char *message);
+void reset_inactivity_timer(void);
 
 bool send_command(const char *command, const char *action, const char *value, int32_t delta,
                   int32_t index, bool include_delta, bool include_index);
