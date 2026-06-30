@@ -91,6 +91,17 @@ function refreshAccessToken(tokenUrl, retriesRemaining) {
       return response.access_token;
     })
     .catch(function (error) {
+      if (error && error.status === 401) {
+        patchSettings({
+          paired: false,
+          refreshToken: null,
+          oauthToken: null,
+          oauthTokenExpires: null,
+        });
+        error.needsPairing = true;
+        throw error;
+      }
+
       if (retriesRemaining > 0) {
         console.log(
           "access token refresh failed, retrying: " +
@@ -101,15 +112,7 @@ function refreshAccessToken(tokenUrl, retriesRemaining) {
         });
       }
 
-      patchSettings({
-        paired: false,
-        refreshToken: null,
-        oauthToken: null,
-        oauthTokenExpires: null,
-      });
-      error = error || new Error("Access token refresh failed");
-      error.needsPairing = true;
-      throw error;
+      throw error || new Error("Access token refresh failed");
     });
 }
 
